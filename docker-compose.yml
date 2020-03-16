@@ -1,0 +1,17 @@
+# WARNING: this file is not suitable for production, please use with caution
+version: '3'
+
+services:
+  web:
+    image: data_subscriptions
+    build: .
+    command: gunicorn -b 0.0.0.0:5000 data_subscriptions.wsgi:app
+    env_file:
+      - ./.flaskenv
+    environment:
+      - DATABASE_URI=sqlite:////db/data_subscriptions.db
+    volumes:
+      - ./data_subscriptions:/code/data_subscriptions
+      - ./db/:/db/
+    ports:
+      - "5000:5000"
