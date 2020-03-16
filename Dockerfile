@@ -11,8 +11,9 @@ FROM python:3.8
 RUN mkdir /code
 WORKDIR /code
 
-COPY requirements.txt setup.py tox.ini ./
+COPY requirements.txt requirements-dev.txt setup.py ./
 RUN pip install -r requirements.txt
+RUN pip install -r requirements-dev.txt
 RUN pip install -e .
 
 COPY data_subscriptions data_subscriptions/

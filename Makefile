@@ -1,4 +1,4 @@
-.PHONY: init init-migration build run db-migrate test tox
+.PHONY: init init-migration build run db-migrate test
 
 init:  build run
 	docker-compose exec web data_subscriptions db upgrade
@@ -18,10 +18,7 @@ db-upgrade:
 	docker-compose exec web data_subscriptions db upgrade
 
 test:
-	docker-compose run -v $(PWD)/tests:/code/tests:ro web tox -e test
-
-tox:
-	docker-compose run -v $(PWD)/tests:/code/tests:ro web tox -e py38
+	docker-compose run --rm web pytest
 
 lint:
-	docker-compose run web tox -e lint
+	docker-compose run --rm web black --check .

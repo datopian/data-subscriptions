@@ -12,6 +12,7 @@ services:
       - DATABASE_URI=sqlite:////db/data_subscriptions.db
     volumes:
       - ./data_subscriptions:/code/data_subscriptions
+      - ./tests:/code/tests
       - ./db/:/db/
     ports:
       - "5000:5000"

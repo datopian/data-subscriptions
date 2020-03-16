@@ -11,4 +11,3 @@ marshmallow-sqlalchemy
 marshmallow>=3
 passlib
 python-dotenv
-tox

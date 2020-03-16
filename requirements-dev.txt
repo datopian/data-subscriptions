@@ -1,0 +1,6 @@
+black
+factory_boy
+pytest
+pytest-factoryboy
+pytest-flask
+pytest-runner
