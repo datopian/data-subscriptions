@@ -1,5 +1,8 @@
 import json
+
+import factory
 import pytest
+from pytest_factoryboy import register
 
 from data_subscriptions.models import User
 from data_subscriptions.app import create_app
@@ -26,9 +29,7 @@ def db(app):
 
 
 @pytest.fixture
-def admin_user(db):
-    user = User(username="admin", email="admin@admin.com", password="admin")
-
+def admin_user(db, user):
     db.session.add(user)
     db.session.commit()
 
@@ -37,7 +38,7 @@ def admin_user(db):
 
 @pytest.fixture
 def admin_headers(admin_user, client):
-    data = {"username": admin_user.username, "password": "admin"}
+    data = {"username": admin_user.username, "password": "mypwd"}
     rep = client.post(
         "/auth/login",
         data=json.dumps(data),
@@ -53,7 +54,7 @@ def admin_headers(admin_user, client):
 
 @pytest.fixture
 def admin_refresh_headers(admin_user, client):
-    data = {"username": admin_user.username, "password": "admin"}
+    data = {"username": admin_user.username, "password": "mypwd"}
     rep = client.post(
         "/auth/login",
         data=json.dumps(data),
@@ -65,3 +66,14 @@ def admin_refresh_headers(admin_user, client):
         "content-type": "application/json",
         "authorization": "Bearer %s" % tokens["refresh_token"],
     }
+
+
+@register
+class UserFactory(factory.Factory):
+
+    username = factory.Sequence(lambda n: "user%d" % n)
+    email = factory.Sequence(lambda n: "user%d@mail.com" % n)
+    password = "mypwd"
+
+    class Meta:
+        model = User

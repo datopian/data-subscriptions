@@ -1,18 +1,4 @@
-import factory
-from pytest_factoryboy import register
-
 from data_subscriptions.models import User
-
-
-@register
-class UserFactory(factory.Factory):
-
-    username = factory.Sequence(lambda n: "user%d" % n)
-    email = factory.Sequence(lambda n: "user%d@mail.com" % n)
-    password = "mypwd"
-
-    class Meta:
-        model = User
 
 
 def test_get_user(client, db, user, admin_headers):

@@ -1,5 +1,6 @@
 black
 factory_boy
+ipdb
 pytest
 pytest-factoryboy
 pytest-flask
