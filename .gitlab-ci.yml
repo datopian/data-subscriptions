@@ -1,0 +1,22 @@
+image: docker:latest
+
+variables:
+  COMPOSE_INTERACTIVE_NO_CLI: "1"
+
+services:
+  - docker:dind
+
+before_script:
+  - apk update
+  - apk add --no-cache docker-compose make
+  - make setup
+
+after_script:
+  - docker-compose stop
+  - docker-compose rm -f
+
+test:
+  stage: test
+  script:
+    - make test
+    - make lint

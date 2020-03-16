@@ -1,10 +1,10 @@
 setup:
-	cp -n .env.example .env
+	cp .env.example .env
 	docker-compose build
 	docker-compose up -d
-	docker-compose exec web data_subscriptions db upgrade
-	docker-compose exec web data_subscriptions init
-	docker-compose exec web data_subscriptions db migrate
+	docker-compose run --rm web data_subscriptions db upgrade
+	docker-compose run --rm web data_subscriptions init
+	docker-compose run --rm web data_subscriptions db migrate
 
 test:
 	docker-compose run --rm web pytest -s
