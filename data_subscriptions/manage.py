@@ -21,7 +21,9 @@ def init():
     from data_subscriptions.models import User
 
     click.echo("create user")
-    user = User(username="admin", email="admin@example.com", password="admin", active=True)
+    user = User(
+        username="admin", email="admin@example.com", password="admin", active=True
+    )
     db.session.add(user)
     db.session.commit()
     click.echo("created user admin")

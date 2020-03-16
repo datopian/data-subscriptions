@@ -10,7 +10,11 @@ from flask_jwt_extended import (
 
 from data_subscriptions.models import User
 from data_subscriptions.extensions import pwd_context, jwt, apispec
-from data_subscriptions.auth.helpers import revoke_token, is_token_revoked, add_token_to_database
+from data_subscriptions.auth.helpers import (
+    revoke_token,
+    is_token_revoked,
+    add_token_to_database,
+)
 
 
 blueprint = Blueprint("auth", __name__, url_prefix="/auth")

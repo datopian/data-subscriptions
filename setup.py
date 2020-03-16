@@ -20,8 +20,6 @@ setup(
         "apispec-webframeworks",
     ],
     entry_points={
-        "console_scripts": [
-            "data_subscriptions = data_subscriptions.manage:cli"
-        ]
+        "console_scripts": ["data_subscriptions = data_subscriptions.manage:cli"]
     },
 )
