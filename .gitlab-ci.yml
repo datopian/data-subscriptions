@@ -6,12 +6,10 @@ variables:
 services:
   - docker:dind
 
-before_script:
-  - apk update
-
 # test:
 #   stage: test
 #   script:
+#     - apk update
 #     - apk add --no-cache docker-compose make
 #     - make setup
 #     - make test
