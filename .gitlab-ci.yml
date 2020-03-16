@@ -6,21 +6,21 @@ variables:
 services:
   - docker:dind
 
-# test:
-#   stage: test
-#   script:
-#     - apk update
-#     - apk add --no-cache docker-compose make
-#     - make setup
-#     - make test
-#     - make lint
-#     - docker-compose stop
-#     - docker-compose rm -f
+test:
+  stage: test
+  script:
+    - apk update
+    - apk add --no-cache docker-compose make
+    - make setup
+    - make test
+    - make lint
+    - docker-compose stop
+    - docker-compose rm -f
 
 deploy:
   image: ruby:latest
   stage: deploy
-  # only: master
+  only: master
   script:
     - gem install dpl dpl-heroku
     - dpl --provider=heroku --app=$HEROKU_APP --api-key=$HEROKU_API_KEY
