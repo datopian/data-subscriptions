@@ -7,12 +7,14 @@ services:
 
   web:
     build: .
+    depends_on:
+      - postgres
     env_file:
       - ./.env
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_USER}
+    ports:
+      - "5000:5000"
     volumes:
       - ./data_subscriptions:/code/data_subscriptions
       - ./tests:/code/tests
-    ports:
-      - "5000:5000"
