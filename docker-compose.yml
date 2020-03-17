@@ -1,14 +1,18 @@
 version: "3.7"
 services:
+  postgres:
+    env_file:
+      - .env
+    image: postgres:12.2-alpine
+
   web:
     build: .
     env_file:
       - ./.env
     environment:
-      - DATABASE_URI=sqlite:////db/data_subscriptions.db
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_USER}
     volumes:
       - ./data_subscriptions:/code/data_subscriptions
       - ./tests:/code/tests
-      - ./db/:/db/
     ports:
       - "5000:5000"

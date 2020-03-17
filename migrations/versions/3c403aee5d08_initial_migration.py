@@ -37,7 +37,7 @@ def upgrade():
         sa.Column("user_id", sa.Integer(), nullable=False),
         sa.Column("revoked", sa.Boolean(), nullable=False),
         sa.Column("expires", sa.DateTime(), nullable=False),
-        sa.ForeignKeyConstraint(["user_id"], ["user.id"],),
+        sa.ForeignKeyConstraint(["user_id"], ["user.id"], ondelete="CASCADE",),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("jti"),
     )
