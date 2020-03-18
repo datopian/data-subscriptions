@@ -25,9 +25,6 @@ def db(app):
     _db.session.close()
     _db.drop_all()
 
-    with app.app_context():
-        _db.create_all()
-
 
 @pytest.fixture
 def nonsubscribable_dataset():

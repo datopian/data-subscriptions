@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask
 
 from data_subscriptions import api
@@ -8,8 +10,9 @@ def create_app(testing=False, cli=False):
     app = Flask("data_subscriptions")
     app.config.from_object("data_subscriptions.config")
 
-    if testing is True:
+    if testing:
         app.config["TESTING"] = True
+        app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("TEST_DATABASE_URL")
 
     configure_extensions(app, cli)
     register_blueprints(app)
