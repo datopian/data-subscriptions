@@ -1,8 +1,6 @@
 import json
 
-import factory
 import pytest
-from pytest_factoryboy import register
 
 from data_subscriptions.models import User
 from data_subscriptions.app import create_app
@@ -27,29 +25,8 @@ def db(app):
     _db.session.close()
     _db.drop_all()
 
-
-@pytest.fixture
-def admin_user(db, user):
-    db.session.add(user)
-    db.session.commit()
-
-    return user
-
-
-@pytest.fixture
-def admin_headers(admin_user, client):
-    data = {"username": admin_user.username, "password": "mypwd"}
-    rep = client.post(
-        "/auth/login",
-        data=json.dumps(data),
-        headers={"content-type": "application/json"},
-    )
-
-    tokens = json.loads(rep.get_data(as_text=True))
-    return {
-        "content-type": "application/json",
-        "authorization": "Bearer %s" % tokens["access_token"],
-    }
+    with app.app_context():
+        _db.create_all()
 
 
 @pytest.fixture
