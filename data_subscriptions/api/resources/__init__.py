@@ -1,7 +1,6 @@
-from data_subscriptions.api.resources.user import UserResource, UserList
 from data_subscriptions.api.resources.nonsubscribable_dataset import (
-    NonsubscribableDatasetResource,
+    NonsubscribableDataset,
 )
 
 
-__all__ = ["NonsubscribableDatasetResource", "UserResource", "UserList"]
+__all__ = ["NonsubscribableDataset"]

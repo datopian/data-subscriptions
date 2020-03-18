@@ -10,23 +10,7 @@ def create_data_subscriptions(info):
 
 @click.group(cls=FlaskGroup, create_app=create_data_subscriptions)
 def cli():
-    """Main entry point"""
-
-
-@cli.command("init")
-def init():
-    """Create a new admin user
-    """
-    from data_subscriptions.extensions import db
-    from data_subscriptions.models import User
-
-    click.echo("create user")
-    user = User(
-        username="admin", email="admin@example.com", password="admin", active=True
-    )
-    db.session.add(user)
-    db.session.commit()
-    click.echo("created user admin")
+    """Service to monitor and alert users about changes in datasets."""
 
 
 if __name__ == "__main__":

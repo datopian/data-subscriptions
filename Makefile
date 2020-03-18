@@ -3,7 +3,6 @@ setup:
 	docker-compose build
 	docker-compose up -d
 	docker-compose run --rm web data_subscriptions db upgrade
-	docker-compose run --rm web data_subscriptions init
 
 test:
 	docker-compose run --rm web pytest -s

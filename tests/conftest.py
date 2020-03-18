@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from data_subscriptions.models import NonsubscribableDataset, User
+from data_subscriptions.models import NonsubscribableDataset
 from data_subscriptions.app import create_app
 from data_subscriptions.extensions import db as _db
 

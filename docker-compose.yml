@@ -7,7 +7,7 @@ services:
 
   web:
     build: .
-    command: data_subscriptions run
+    command: data_subscriptions run --host=0.0.0.0
     depends_on:
       - postgres
     env_file:
