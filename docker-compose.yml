@@ -7,7 +7,7 @@ services:
 
   web:
     build: .
-    command: data_subscriptions run --host=0.0.0.0
+    command: data_subscriptions run --host=0.0.0.0 --port=5500
     depends_on:
       - postgres
     env_file:
@@ -15,7 +15,7 @@ services:
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_USER}
     ports:
-      - "5000:5000"
+      - "5500:5500"
     volumes:
       - ./data_subscriptions:/code/data_subscriptions
       - ./migrations:/code/migrations

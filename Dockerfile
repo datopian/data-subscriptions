@@ -14,6 +14,6 @@ RUN pip install -e .
 COPY data_subscriptions data_subscriptions/
 COPY migrations migrations/
 
-EXPOSE 5000
+EXPOSE 5500
 
-CMD ["gunicorn", "-b", "0.0.0.0:5000", "data_subscriptions.wsgi:app"]
+CMD ["gunicorn", "-b", "0.0.0.0:5500", "data_subscriptions.wsgi:app"]
