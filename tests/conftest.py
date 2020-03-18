@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from data_subscriptions.models import User
+from data_subscriptions.models import NonsubscribableDataset, User
 from data_subscriptions.app import create_app
 from data_subscriptions.extensions import db as _db
 
@@ -30,27 +30,5 @@ def db(app):
 
 
 @pytest.fixture
-def admin_refresh_headers(admin_user, client):
-    data = {"username": admin_user.username, "password": "mypwd"}
-    rep = client.post(
-        "/auth/login",
-        data=json.dumps(data),
-        headers={"content-type": "application/json"},
-    )
-
-    tokens = json.loads(rep.get_data(as_text=True))
-    return {
-        "content-type": "application/json",
-        "authorization": "Bearer %s" % tokens["refresh_token"],
-    }
-
-
-@register
-class UserFactory(factory.Factory):
-
-    username = factory.Sequence(lambda n: "user%d" % n)
-    email = factory.Sequence(lambda n: "user%d@mail.com" % n)
-    password = "mypwd"
-
-    class Meta:
-        model = User
+def nonsubscribable_dataset():
+    return NonsubscribableDataset(dataset_id="b72159fe-67d8-4ea7-8313-af2bf9210799")

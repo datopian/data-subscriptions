@@ -3,7 +3,11 @@ from flask_restful import Api
 from marshmallow import ValidationError
 
 from data_subscriptions.extensions import apispec
-from data_subscriptions.api.resources import UserResource, UserList
+from data_subscriptions.api.resources import (
+    NonsubscribableDatasetResource,
+    UserResource,
+    UserList,
+)
 from data_subscriptions.api.resources.user import UserSchema
 
 
@@ -13,6 +17,9 @@ api = Api(blueprint)
 
 api.add_resource(UserResource, "/users/<int:user_id>")
 api.add_resource(UserList, "/users")
+api.add_resource(
+    NonsubscribableDatasetResource, "/nonsubscribable_datasets/<string:dataset_id>"
+)
 
 
 @blueprint.before_app_first_request
