@@ -11,13 +11,7 @@ setup(
         "flask-sqlalchemy",
         "flask-restful",
         "flask-migrate",
-        "flask-jwt-extended",
-        "flask-marshmallow",
-        "marshmallow-sqlalchemy",
         "python-dotenv",
-        "passlib",
-        "apispec[yaml]",
-        "apispec-webframeworks",
     ],
     entry_points={
         "console_scripts": ["data_subscriptions = data_subscriptions.manage:cli"]

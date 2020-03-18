@@ -7,6 +7,7 @@ services:
 
   web:
     build: .
+    command: data_subscriptions run --host=0.0.0.0
     depends_on:
       - postgres
     env_file:
@@ -17,4 +18,5 @@ services:
       - "5000:5000"
     volumes:
       - ./data_subscriptions:/code/data_subscriptions
+      - ./migrations:/code/migrations
       - ./tests:/code/tests
