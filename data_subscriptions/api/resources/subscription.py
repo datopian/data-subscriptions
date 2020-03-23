@@ -17,8 +17,14 @@ class Subscription(Resource):
         }
 
     def post(self, dataset_id):
+        status = 200
         data = request.get_json(force=True)
         user_id = data["user_id"]
-        db.session.add(Model(dataset_id=dataset_id, user_id=user_id))
-        db.session.commit()
-        return {"dataset_id": dataset_id, "user_id": user_id,}, 201
+        is_not_in_db = not db.session.query(
+            Model.query.filter_by(dataset_id=dataset_id, user_id=user_id).exists()
+        ).scalar()
+        if is_not_in_db:
+            db.session.add(Model(dataset_id=dataset_id, user_id=user_id))
+            db.session.commit()
+            status = 201
+        return {"dataset_id": dataset_id, "user_id": user_id}, status
