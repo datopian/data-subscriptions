@@ -32,7 +32,7 @@ class Subscription(Resource):
     def delete(self, dataset_id):
         data = request.get_json(force=True)
         user_id = data["user_id"]
-        status = 404
+        status = 202
         is_subscribed = Model.query.filter_by(
             dataset_id=dataset_id, user_id=user_id
         ).one_or_none()
