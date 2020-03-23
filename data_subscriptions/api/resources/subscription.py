@@ -17,9 +17,8 @@ class Subscription(Resource):
         }
 
     def post(self, dataset_id):
-        data = request.get_json( force = True )
-        
-        return {
-            "dataset_id": dataset_id,
-            "user_id": data["user_id"],
-        }
+        data = request.get_json(force=True)
+        user_id = data["user_id"]
+        db.session.add(Model(dataset_id=dataset_id, user_id=user_id))
+        db.session.commit()
+        return {"dataset_id": dataset_id, "user_id": user_id,}, 201
