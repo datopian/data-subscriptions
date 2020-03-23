@@ -15,3 +15,11 @@ class Subscription(Resource):
             "dataset_id": subscription.dataset_id,
             "user_id": subscription.user_id,
         }
+
+    def post(self, dataset_id):
+        data = request.get_json( force = True )
+        
+        return {
+            "dataset_id": dataset_id,
+            "user_id": data["user_id"],
+        }
