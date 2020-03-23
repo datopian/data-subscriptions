@@ -33,10 +33,11 @@ class Subscription(Resource):
         data = request.get_json(force=True)
         user_id = data["user_id"]
         status = 404
-        is_subscribed = Model.query.filter_by(dataset_id=dataset_id, user_id=user_id).one_or_none()
+        is_subscribed = Model.query.filter_by(
+            dataset_id=dataset_id, user_id=user_id
+        ).one_or_none()
         if is_subscribed:
             db.session.delete(is_subscribed)
             db.session.commit()
             status = 204
         return None, status
-        

@@ -38,6 +38,7 @@ def test_post_subscription_201_new(client, db, subscription):
     ).scalar()
     assert is_in_db
 
+
 def test_post_subscription_already_made(client, db, subscription):
     # Return 200 OK when already subscribed to the dataset.
     db.session.add(subscription)
@@ -51,6 +52,7 @@ def test_post_subscription_already_made(client, db, subscription):
     assert data["dataset_id"] == dataset_id
     assert data["user_id"] == user_id
 
+
 def test_delete_unsubscribe(client, db, subscription):
     # Return 204 NO CONTENT when subscription deleted.
     db.session.add(subscription)
@@ -60,4 +62,3 @@ def test_delete_unsubscribe(client, db, subscription):
     data = json.dumps({"user_id": subscription.user_id})
     response = client.delete(f"/api/v1/subscription/{dataset_id}", data=data)
     assert response.status_code == 204
-   
