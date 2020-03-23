@@ -28,3 +28,15 @@ class Subscription(Resource):
             db.session.commit()
             status = 201
         return {"dataset_id": dataset_id, "user_id": user_id}, status
+
+    def delete(self, dataset_id):
+        data = request.get_json(force=True)
+        user_id = data["user_id"]
+        status = 404
+        is_subscribed = Model.query.filter_by(dataset_id=dataset_id, user_id=user_id).one_or_none()
+        if is_subscribed:
+            db.session.delete(is_subscribed)
+            db.session.commit()
+            status = 204
+        return None, status
+        
