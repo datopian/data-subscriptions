@@ -1,7 +1,11 @@
 from flask import Blueprint, current_app, jsonify
 from flask_restful import Api
 
-from data_subscriptions.api.resources import NonsubscribableDataset, Subscription
+from data_subscriptions.api.resources import (
+    NonsubscribableDataset,
+    Subscription,
+    SubscribedDataset,
+)
 
 blueprint = Blueprint("api", __name__, url_prefix="/api/v1")
 api = Api(blueprint)
@@ -12,4 +16,8 @@ api.add_resource(
 )
 api.add_resource(
     Subscription, "/subscription/<string:dataset_id>",
+)
+
+api.add_resource(
+    SubscribedDataset, "/user/<string:user_id>",
 )
