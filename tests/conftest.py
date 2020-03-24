@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from data_subscriptions.models import NonsubscribableDataset
+from data_subscriptions.models import NonsubscribableDataset, Subscription
 from data_subscriptions.app import create_app
 from data_subscriptions.extensions import db as _db
 
@@ -29,3 +29,10 @@ def db(app):
 @pytest.fixture
 def nonsubscribable_dataset():
     return NonsubscribableDataset(dataset_id="b72159fe-67d8-4ea7-8313-af2bf9210799")
+
+
+@pytest.fixture
+def subscription():
+    return Subscription(
+        dataset_id="b72159fe-67d8-4ea7-8313-af2bf9210799", user_id="123"
+    )
