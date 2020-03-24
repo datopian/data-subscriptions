@@ -2,7 +2,7 @@ from flask_restful import Resource, request
 
 from data_subscriptions.extensions import db
 
-from data_subscriptions.models import Subscription as Model
+from data_subscriptions.models import Subscription as Model, NonsubscribableDataset
 
 
 class Subscription(Resource):
@@ -17,27 +17,37 @@ class Subscription(Resource):
         }
 
     def post(self, dataset_id):
-        status = 200
+        status = 201
         data = request.get_json(force=True)
         user_id = data["user_id"]
-        is_not_in_db = not db.session.query(
-            Model.query.filter_by(dataset_id=dataset_id, user_id=user_id).exists()
-        ).scalar()
-        if is_not_in_db:
-            db.session.add(Model(dataset_id=dataset_id, user_id=user_id))
-            db.session.commit()
-            status = 201
+        is_unsubscribable = NonsubscribableDataset.query.filter_by(
+            dataset_id=dataset_id
+        ).one_or_none()
+        # if dataset is blacklisted for subscription.
+        if is_unsubscribable is None:
+            is_not_in_db = not db.session.query(
+                Model.query.filter_by(dataset_id=dataset_id, user_id=user_id).exists()
+            ).scalar()
+            if is_not_in_db:
+                db.session.add(Model(dataset_id=dataset_id, user_id=user_id))
+                db.session.commit()
+            else:
+                return {"dataset_id": dataset_id, "user_id": user_id}, 422
+        else:
+            return {"dataset_id": dataset_id}, 422
+
         return {"dataset_id": dataset_id, "user_id": user_id}, status
 
     def delete(self, dataset_id):
         data = request.get_json(force=True)
         user_id = data["user_id"]
-        status = 202
+        status = 204
         is_subscribed = Model.query.filter_by(
             dataset_id=dataset_id, user_id=user_id
         ).one_or_none()
         if is_subscribed:
             db.session.delete(is_subscribed)
             db.session.commit()
-            status = 204
+        else:
+            return None, 422
         return None, status

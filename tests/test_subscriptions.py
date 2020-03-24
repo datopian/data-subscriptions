@@ -1,4 +1,4 @@
-from data_subscriptions.models import Subscription
+from data_subscriptions.models import Subscription, NonsubscribableDataset
 import json
 
 
@@ -39,16 +39,29 @@ def test_post_subscription_201_new(client, db, subscription):
     assert is_in_db
 
 
-def test_post_subscription_already_made(client, db, subscription):
-    # Return 200 OK when already subscribed to the dataset.
+def test_post_subscription_422_dataset_is_nonsubscribable(client, db, subscription):
+    # Return 422 UNPROCESSABLE ENTITY when subscription made to nonsubscribable datsets.
+    dataset_id = subscription.dataset_id
+    user_id = subscription.user_id
+    db.session.add(NonsubscribableDataset(dataset_id=dataset_id))
+    db.session.commit()
+    data = json.dumps({"user_id": subscription.user_id})
+    response = client.post(f"/api/v1/subscription/{dataset_id}", data=data)
+    data = response.get_json()
+    assert response.status_code == 422
+    assert data["dataset_id"] == dataset_id
+
+
+def test_post_subscription_already_subscribed(client, db, subscription):
+    # Return 422 UNPROCESSABLE ENTITY when already subscribed to the dataset.
     db.session.add(subscription)
     db.session.commit()
     user_id = subscription.user_id
     dataset_id = subscription.dataset_id
     data = json.dumps({"user_id": subscription.user_id})
     response = client.post(f"/api/v1/subscription/{dataset_id}", data=data)
-    assert response.status_code == 200
     data = response.get_json()
+    assert response.status_code == 422
     assert data["dataset_id"] == dataset_id
     assert data["user_id"] == user_id
 
@@ -62,3 +75,12 @@ def test_delete_unsubscribe(client, db, subscription):
     data = json.dumps({"user_id": subscription.user_id})
     response = client.delete(f"/api/v1/subscription/{dataset_id}", data=data)
     assert response.status_code == 204
+
+
+def test_delete_unsubscribe_doesnt_exist(client, db, subscription):
+    # Return 422 UNPROCESSABLE ENTITY when delete subscription that doesn't exist.
+    user_id = subscription.user_id
+    dataset_id = subscription.dataset_id
+    data = json.dumps({"user_id": subscription.user_id})
+    response = client.delete(f"/api/v1/subscription/{dataset_id}", data=data)
+    assert response.status_code == 422
