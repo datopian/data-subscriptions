@@ -6,11 +6,11 @@ from data_subscriptions import api
 from data_subscriptions.extensions import db, migrate
 
 
-def create_app(testing=False, cli=False):
+def create_app(cli=False):
     app = Flask("data_subscriptions")
     app.config.from_object("data_subscriptions.config")
 
-    if testing:
+    if os.environ["FLASK_ENV"] == "test":
         app.config["TESTING"] = True
         app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("TEST_DATABASE_URL")
 
