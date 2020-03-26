@@ -104,7 +104,7 @@ def test_fetch_when_api_has_data_in_expected_time_range(
     api = mocker.patch(
         "data_subscriptions.worker.latest_ckan_activity.RemoteCKAN", new=mock_api_1
     )
-    subject = LatestCKANActivity(start_time=dt.datetime(2020, 1, 1))
+    subject = LatestCKANActivity(start_time=dt.datetime(2019, 1, 1))
     response = subject.fetch()
 
     call_args_list = (
@@ -133,7 +133,7 @@ def test_fetch_when_api_has_part_of_its_data_in_expected_time_range(
         mocker.call(limit=1000, offset=0),
         mocker.call(limit=31, offset=31),
     ]
-    assert response == activity_list[:22]
+    assert response == activity_list[:21]
 
 
 def test_fetch_when_api_has_no_data_in_expected_time_range(

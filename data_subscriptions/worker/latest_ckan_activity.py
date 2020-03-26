@@ -29,7 +29,7 @@ class LatestCKANActivity:
     def filter_response_for_time_range(self, response):
         def is_in_time_range(item):
             timestamp = dt.datetime.fromisoformat(item["timestamp"])
-            return (self.start_time is None) or (timestamp >= self.start_time)
+            return (self.start_time is None) or (timestamp > self.start_time)
 
         return filter(is_in_time_range, response)
 
