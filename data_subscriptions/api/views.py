@@ -4,7 +4,7 @@ from flask_restful import Api
 from data_subscriptions.api.resources import (
     NonsubscribableDataset,
     Subscription,
-    SubscribedDataset,
+    User,
 )
 
 blueprint = Blueprint("api", __name__, url_prefix="/api/v1")
@@ -19,5 +19,5 @@ api.add_resource(
 )
 
 api.add_resource(
-    SubscribedDataset, "/user/<string:user_id>",
+    User, "/user/<string:user_id>",
 )
