@@ -2,7 +2,6 @@ from sqlalchemy.sql import functions as func
 from sqlalchemy.types import JSON
 
 from data_subscriptions.extensions import db
-
 from data_subscriptions.models.base import BaseModel
 
 
