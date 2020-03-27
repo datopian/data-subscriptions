@@ -12,9 +12,7 @@ def test_get_subscribed_datasets_200(client, db, subscription_list):
     user_id = subscription_list[0]["user_id"]
     response = client.get(f"/api/v1/user/{user_id}")
     data = response.get_json()
-    assert data == {
-        "user": {"subscriptions": [subscription_list[0], subscription_list[1]]}
-    }
+    assert data == {"subscriptions": [subscription_list[0], subscription_list[1]]}
     assert response.status_code == 200
 
 

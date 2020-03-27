@@ -10,8 +10,6 @@ class User(Resource):
         datasets = db.session.query(Model).filter_by(user_id=user_id).all()
         datasetsSchema = Schema(many=True)
         if datasets:
-            subscribed_datasets = {
-                "user": {"subscriptions": datasetsSchema.dump(datasets)}
-            }
+            subscribed_datasets = {"subscriptions": datasetsSchema.dump(datasets)}
             return subscribed_datasets, 200
         return None, 404
