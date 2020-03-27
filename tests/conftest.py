@@ -36,3 +36,13 @@ def subscription():
     return Subscription(
         dataset_id="b72159fe-67d8-4ea7-8313-af2bf9210799", user_id="123"
     )
+
+
+@pytest.fixture
+def subscription_list():
+    return [
+        {"dataset_id": "b72159fe-67d8-4ea7-8313-af2bf9210799", "user_id": "user1"},
+        {"dataset_id": "b72159fe-67d8-4ea7-8313-af2bf92107100", "user_id": "user1"},
+        {"dataset_id": "b72159fe-67d8-4ea7-8313-af2bf92107101", "user_id": "user2"},
+        {"dataset_id": "b72159fe-67d8-4ea7-8313-af2bf92107102", "user_id": "user2"},
+    ]
