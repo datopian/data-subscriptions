@@ -1,7 +1,7 @@
 """create_dataset_activity_list
 
 Revision ID: c64d1ba3151b
-Revises: 53f520a5568f
+Revises: 9e3e665c6a2e
 Create Date: 2020-03-24 14:01:57.185283
 
 """
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = "c64d1ba3151b"
-down_revision = "53f520a5568f"
+down_revision = "9e3e665c6a2e"
 branch_labels = None
 depends_on = None
 
