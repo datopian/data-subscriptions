@@ -7,6 +7,12 @@ services:
     volumes:
       - ./postgres:/docker-entrypoint-initdb.d
 
+  rabbitmq:
+    image: rabbitmq:3.8.3-alpine
+
+  redis:
+    image: redis:5.0.8-alpine
+
   web:
     build: .
     command: data_subscriptions run --host=0.0.0.0 --port=5500
@@ -23,3 +29,17 @@ services:
       - ./data_subscriptions:/code/data_subscriptions
       - ./migrations:/code/migrations
       - ./tests:/code/tests
+
+  worker:
+    build: .
+    command: celery -A data_subscriptions.worker worker -B --loglevel=INFO --schedule=/tmp/celerybeat-schedule
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+    env_file:
+      - ./.env
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_USER}
+    volumes:
+      - ./data_subscriptions:/code/data_subscriptions
