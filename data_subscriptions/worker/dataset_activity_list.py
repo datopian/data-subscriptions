@@ -11,7 +11,7 @@ class DatasetActivityList:
     def __init__(self):
         self.app = create_app()
 
-    def run(self):
+    def __call__(self):
         self.extract()
         self.load()
 

@@ -11,7 +11,7 @@ class LatestCKANActivity:
         self.server_limit = proposed_limit
         self.current_offset = 0
 
-    def fetch(self):
+    def __call__(self):
         api = RemoteCKAN(self.url)
         self.activity_list = []
         while True:

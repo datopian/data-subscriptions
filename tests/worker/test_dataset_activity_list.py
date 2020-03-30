@@ -13,10 +13,10 @@ def subject():
     return DatasetActivityList()
 
 
-def test_run(mocker, subject):
+def test_call(mocker, subject):
     mocker.patch.object(subject, "extract")
     mocker.patch.object(subject, "load")
-    subject.run()
+    subject()
     subject.extract.assert_called_once()
     subject.load.assert_called_once()
 
