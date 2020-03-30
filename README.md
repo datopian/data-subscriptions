@@ -2,6 +2,49 @@
 
 *Service to monitor and alert users about changes in datasets.*
 
+## API
+
+To list all available routes in the app, you can run the following docker-compose command:
+
+```bash
+docker-compose run --rm web data_subscriptions routes
+```
+
+Base URI: `/api/v1/`
+
+### Non-subscribable datasets
+
+**Endpoint: `/nonsubscribable_datasets/<string:dataset_id>`**
+
+By default, all datasets are subscribable. It is the data curator's work to disable subscriptions for a dataset.
+
+Available methods:
+
+* `GET` - Check if a dataset is non-subscribable.
+* `POST` - Make a dataset non-subscribable, i.e., disable subscriptions.
+* `DELETE` - Delete a dataset from list of non-subscribable datasets, i.e., make it subscribable again.
+
+### Subscriptions
+
+**Endpoint: `/subscription/<string:dataset_id>`**
+
+Available methods:
+
+* `GET` - Get if given user is subscribed to given dataset.
+  * params: `user_id`
+* `POST` - Subscribe a user to a dataset.
+  * body: `{"user_id": <string:user_id>}`
+* `DELETE` - Unsubscribe s user from a dataset.
+  * body: `{"user_id": <string:user_id>}`
+
+### User
+
+**Endpoint: `/user/<string:user_id>`**
+
+Available methods:
+
+* `GET` - Get list of subscriptions for a given user.
+
 ## Development
 
 To setup the project using Docker containers:
