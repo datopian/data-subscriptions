@@ -15,8 +15,8 @@ By default, all datasets are subscribable. It is the data curator's work to disa
 Available methods:
 
 * `GET` - Check if a dataset is non-subscribable.
-* `POST` - Make a dataset non-subscribable, e.g., disable subscriptions.
-* `DELETE` - Delete a dataset from list of non-subscribable datasets, e.g., make it subscribable again.
+* `POST` - Make a dataset non-subscribable, i.e., disable subscriptions.
+* `DELETE` - Delete a dataset from list of non-subscribable datasets, i.e., make it subscribable again.
 
 ### Subscriptions
 
