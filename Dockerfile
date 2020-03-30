@@ -11,6 +11,10 @@ RUN pip install -r requirements.txt
 RUN pip install -r requirements-dev.txt
 RUN pip install -e .
 
+RUN useradd -ms /bin/bash app
+RUN chown -R app .
+USER app
+
 COPY data_subscriptions data_subscriptions/
 COPY migrations migrations/
 
