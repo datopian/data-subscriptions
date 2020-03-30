@@ -3,6 +3,9 @@ image: docker:latest
 variables:
   COMPOSE_INTERACTIVE_NO_CLI: "1"
 
+include:
+  - template: Code-Quality.gitlab-ci.yml
+
 services:
   - docker:dind
 
