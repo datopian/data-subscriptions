@@ -24,4 +24,4 @@ deploy:
     - master
   script:
     - gem install dpl dpl-heroku
-    - dpl --provider=heroku --app=$HEROKU_APP --api-key=$HEROKU_API_KEY
+    - dpl --provider=heroku --app=$HEROKU_APP --api-key=$HEROKU_API_KEY --run='data_subscriptions db upgrade'
