@@ -42,14 +42,14 @@ def mock_api_3(mocker, activity_list):
     return api
 
 
-def test_fetch_when_api_returns_all_the_data_in_a_single_request(
+def test_call_when_api_returns_all_the_data_in_a_single_request(
     mocker, mock_api_1, activity_list
 ):
     api = mocker.patch(
         "data_subscriptions.worker.latest_ckan_activity.RemoteCKAN", new=mock_api_1
     )
     subject = LatestCKANActivity(proposed_limit=100)
-    response = subject.fetch()
+    response = subject()
 
     call_args_list = (
         api.return_value.action.recently_changed_packages_activity_list.call_args_list
@@ -61,14 +61,14 @@ def test_fetch_when_api_returns_all_the_data_in_a_single_request(
     assert response == activity_list
 
 
-def test_fetch_when_api_has_smaller_limit_than_proposed_limit(
+def test_call_when_api_has_smaller_limit_than_proposed_limit(
     mocker, mock_api_2, activity_list
 ):
     api = mocker.patch(
         "data_subscriptions.worker.latest_ckan_activity.RemoteCKAN", new=mock_api_2
     )
     subject = LatestCKANActivity(proposed_limit=100)
-    response = subject.fetch()
+    response = subject()
 
     call_args_list = (
         api.return_value.action.recently_changed_packages_activity_list.call_args_list
@@ -82,12 +82,12 @@ def test_fetch_when_api_has_smaller_limit_than_proposed_limit(
     assert response == activity_list
 
 
-def test_fetch_when_api_has_no_data(mocker, mock_api_3, activity_list):
+def test_call_when_api_has_no_data(mocker, mock_api_3, activity_list):
     api = mocker.patch(
         "data_subscriptions.worker.latest_ckan_activity.RemoteCKAN", new=mock_api_3
     )
     subject = LatestCKANActivity(proposed_limit=100)
-    response = subject.fetch()
+    response = subject()
 
     call_args_list = (
         api.return_value.action.recently_changed_packages_activity_list.call_args_list
@@ -98,14 +98,14 @@ def test_fetch_when_api_has_no_data(mocker, mock_api_3, activity_list):
     assert response == []
 
 
-def test_fetch_when_api_has_data_in_expected_time_range(
+def test_call_when_api_has_data_in_expected_time_range(
     mocker, mock_api_1, activity_list
 ):
     api = mocker.patch(
         "data_subscriptions.worker.latest_ckan_activity.RemoteCKAN", new=mock_api_1
     )
     subject = LatestCKANActivity(start_time=dt.datetime(2019, 1, 1))
-    response = subject.fetch()
+    response = subject()
 
     call_args_list = (
         api.return_value.action.recently_changed_packages_activity_list.call_args_list
@@ -117,14 +117,14 @@ def test_fetch_when_api_has_data_in_expected_time_range(
     assert response == activity_list
 
 
-def test_fetch_when_api_has_part_of_its_data_in_expected_time_range(
+def test_call_when_api_has_part_of_its_data_in_expected_time_range(
     mocker, mock_api_1, activity_list
 ):
     api = mocker.patch(
         "data_subscriptions.worker.latest_ckan_activity.RemoteCKAN", new=mock_api_1
     )
     subject = LatestCKANActivity(start_time=dt.datetime(2020, 1, 10))
-    response = subject.fetch()
+    response = subject()
 
     call_args_list = (
         api.return_value.action.recently_changed_packages_activity_list.call_args_list
@@ -136,14 +136,14 @@ def test_fetch_when_api_has_part_of_its_data_in_expected_time_range(
     assert response == activity_list[:21]
 
 
-def test_fetch_when_api_has_no_data_in_expected_time_range(
+def test_call_when_api_has_no_data_in_expected_time_range(
     mocker, mock_api_2, activity_list
 ):
     api = mocker.patch(
         "data_subscriptions.worker.latest_ckan_activity.RemoteCKAN", new=mock_api_2
     )
     subject = LatestCKANActivity(start_time=dt.datetime(2021, 1, 1))
-    response = subject.fetch()
+    response = subject()
 
     call_args_list = (
         api.return_value.action.recently_changed_packages_activity_list.call_args_list
