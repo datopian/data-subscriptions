@@ -1,4 +1,5 @@
 import json
+import os
 
 import pytest
 
@@ -6,10 +7,12 @@ from data_subscriptions.models import NonsubscribableDataset, Subscription
 from data_subscriptions.app import create_app
 from data_subscriptions.extensions import db as _db
 
+os.environ["FLASK_ENV"] = "test"
+
 
 @pytest.fixture
 def app():
-    app = create_app(testing=True)
+    app = create_app()
     return app
 
 
@@ -29,6 +32,17 @@ def db(app):
 @pytest.fixture
 def nonsubscribable_dataset():
     return NonsubscribableDataset(dataset_id="b72159fe-67d8-4ea7-8313-af2bf9210799")
+
+
+@pytest.fixture
+def dataset_activity_list():
+    import datetime as dt
+    from data_subscriptions.models.dataset_activity_list import DatasetActivityList
+
+    return DatasetActivityList(
+        collected_at=dt.datetime.now(),
+        last_activity_created_at=dt.datetime(2020, 2, 1),
+    )
 
 
 @pytest.fixture
