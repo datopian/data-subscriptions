@@ -4,6 +4,12 @@
 
 ## API
 
+To list all available routes in the app, you can run the following docker-compose command:
+
+```bash
+docker-compose run --rm web data_subscriptions routes
+```
+
 Base URI: `/api/v1/`
 
 ### Non-subscribable datasets
