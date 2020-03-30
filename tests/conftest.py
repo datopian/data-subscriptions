@@ -1,9 +1,14 @@
+import datetime as dt
 import json
 import os
 
 import pytest
 
-from data_subscriptions.models import NonsubscribableDataset, Subscription
+from data_subscriptions.models import (
+    DatasetActivityList,
+    NonsubscribableDataset,
+    Subscription,
+)
 from data_subscriptions.app import create_app
 from data_subscriptions.extensions import db as _db
 
@@ -31,16 +36,19 @@ def db(app):
 
 @pytest.fixture
 def nonsubscribable_dataset():
-    return NonsubscribableDataset(dataset_id="b72159fe-67d8-4ea7-8313-af2bf9210799")
+    return NonsubscribableDataset(dataset_id="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
 
 
 @pytest.fixture
 def dataset_activity_list():
-    import datetime as dt
-    from data_subscriptions.models.dataset_activity_list import DatasetActivityList
-
     return DatasetActivityList(
-        collected_at=dt.datetime.now(),
+        blob=[
+            {
+                "object_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+                "timestamp": "2020-02-01T00:00:00.000000",
+            }
+        ],
+        collected_at=dt.datetime(2020, 2, 1),
         last_activity_created_at=dt.datetime(2020, 2, 1),
     )
 
@@ -48,7 +56,8 @@ def dataset_activity_list():
 @pytest.fixture
 def subscription():
     return Subscription(
-        dataset_id="b72159fe-67d8-4ea7-8313-af2bf9210799", user_id="123"
+        dataset_id="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+        user_id="00000000-0000-0000-0000-000000000000",
     )
 
 
