@@ -1,5 +1,5 @@
+from data_subscriptions.app import create_app
 from data_subscriptions.extensions import db
-from data_subscriptions.models import DatasetActivityList as Model
 
 
 QUERY = """
@@ -22,12 +22,14 @@ class ActivityForUser:
     def __init__(self, user_id, start_time):
         self.user_id = user_id
         self.start_time = start_time
+        self.app = create_app()
 
     def __call__(self):
-        result = db.session.execute(
-            QUERY, {"start_time": self.start_time, "user_id": self.user_id}
-        )
-        activity_list = []
-        for row in result:
-            activity_list.append(row[0])
-        return activity_list
+        with self.app.app_context():
+            result = db.session.execute(
+                QUERY, {"start_time": self.start_time, "user_id": self.user_id}
+            )
+            activity_list = []
+            for row in result:
+                activity_list.append(row[0])
+            return activity_list
