@@ -19,4 +19,4 @@ def setup_periodic_tasks(sender, **kwargs):
 
 @app.task
 def pull_latest_activities():
-    DatasetActivityList().run()
+    DatasetActivityList()()

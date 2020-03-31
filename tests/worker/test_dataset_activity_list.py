@@ -27,10 +27,10 @@ def test_extract(mocker, subject, db):
         "data_subscriptions.worker.dataset_activity_list.LatestCKANActivity"
     )
     ckan_blob = [{"timestamp": "2020-01-01T00:00:00.000000"}]
-    ckan_activity.return_value.fetch.return_value = ckan_blob
+    ckan_activity.return_value.return_value = ckan_blob
     subject.extract()
 
-    ckan_activity.return_value.fetch.assert_called_once()
+    ckan_activity.return_value.assert_called_once()
     assert subject.blob == ckan_blob
     assert subject.collected_at == dt.datetime(2020, 3, 1)
 
@@ -41,7 +41,7 @@ def test_extract_without_previous_activity_in_local_db(mocker, subject, db):
         "data_subscriptions.worker.dataset_activity_list.LatestCKANActivity"
     )
     ckan_blob = [{"timestamp": "2020-01-01T00:00:00.000000"}]
-    ckan_activity.return_value.fetch.return_value = ckan_blob
+    ckan_activity.return_value.return_value = ckan_blob
     subject.extract()
 
     one_day_ago = dt.datetime(2020, 2, 29)
@@ -54,7 +54,7 @@ def test_extract_with_previous_activity_in_local_db(
     ckan_activity = mocker.patch(
         "data_subscriptions.worker.dataset_activity_list.LatestCKANActivity"
     )
-    ckan_activity.return_value.fetch.return_value = []
+    ckan_activity.return_value.return_value = []
 
     db.session.add(dataset_activity_list)
     db.session.commit()
@@ -69,7 +69,7 @@ def test_load_empty_blob_from_latest_ckan_activity(mocker, subject):
     ckan_activity = mocker.patch(
         "data_subscriptions.worker.dataset_activity_list.LatestCKANActivity"
     )
-    ckan_activity.return_value.fetch.return_value = []
+    ckan_activity.return_value.return_value = []
     db = mocker.patch("data_subscriptions.worker.dataset_activity_list.db")
 
     subject.load()
