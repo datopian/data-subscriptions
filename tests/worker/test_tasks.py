@@ -1,4 +1,4 @@
-from data_subscriptions import worker as subject
+from data_subscriptions.worker import tasks as subject
 
 
 def test_pull_latest_activities(mocker):

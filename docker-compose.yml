@@ -32,7 +32,7 @@ services:
 
   worker:
     build: .
-    command: celery -A data_subscriptions.worker worker -B --loglevel=INFO --schedule=/tmp/celerybeat-schedule
+    command: celery -A data_subscriptions.worker.tasks worker -B --loglevel=INFO --schedule=/tmp/celerybeat-schedule
     depends_on:
       - postgres
       - redis
