@@ -6,8 +6,8 @@ from celery.schedules import crontab
 from data_subscriptions.worker.dataset_activity_list import DatasetActivityList
 
 PULL_FREQUENCY = int(os.getenv("TIME_IN_SECONDS_BETWEEN_ACTIVITY_PULLS"))
-BACKEND_URL = os.getenv("REDIS_URL")
-BROKER_URL = os.getenv("RABBITMQ_URL")
+BACKEND_URL = os.getenv("REDIS_URL", default=os.getenv("REDISTOGO_URL"))
+BROKER_URL = os.getenv("RABBITMQ_URL", default=os.getenv("CLOUDAMQP_URL"))
 
 app = Celery("tasks", backend=BACKEND_URL, broker=BROKER_URL)
 
