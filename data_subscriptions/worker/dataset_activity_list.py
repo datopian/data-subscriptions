@@ -17,7 +17,7 @@ class DatasetActivityList:
 
     def extract(self):
         self.collected_at = dt.datetime.now()
-        self.blob = LatestCKANActivity(start_time=self.start_time()).fetch()
+        self.blob = LatestCKANActivity(start_time=self.start_time())()
 
     def load(self):
         with self.app.app_context():

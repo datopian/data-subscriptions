@@ -4,3 +4,7 @@ build:
 
 run:
   web: gunicorn -b 0.0.0.0:$PORT data_subscriptions.wsgi:app
+  worker:
+    command:
+      - celery -A data_subscriptions.worker worker -B --loglevel=$WORKER_LOG_LEVEL --schedule=/tmp/celerybeat-schedule
+    image: web
