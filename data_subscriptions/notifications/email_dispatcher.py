@@ -11,10 +11,11 @@ MAILER_FROM_NAME = os.getenv("MAILER_FROM_NAME")
 
 class EmailDispatcher:
     def __init__(self, email):
+        self.email = email
         self.client = SendGridAPIClient(API_KEY)
         self.message = Mail(
             from_email=(MAILER_FROM_EMAIL, MAILER_FROM_NAME),
-            to_emails=email,
+            to_emails=self.email,
             subject="Datasets you subscribed were recently changed",
         )
 
@@ -25,14 +26,5 @@ class EmailDispatcher:
         except Exception as e:
             logging.error(e.body)
             raise e
-
-        was_successful = 200 <= self.response.status_code < 300
-        if was_successful:
-            logging.info(
-                (
-                    f"Email notification dispatched to  SendGrid. "
-                    f"Status {self.response.status_code}."
-                )
-            )
 
         return self.response

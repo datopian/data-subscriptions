@@ -13,6 +13,7 @@ from data_subscriptions.app import create_app
 from data_subscriptions.extensions import db as _db
 
 os.environ["FLASK_ENV"] = "test"
+os.environ["TIME_IN_SECONDS_BETWEEN_NOTIFICATION_DELIVERIES"] = "1800"
 
 
 @pytest.fixture
