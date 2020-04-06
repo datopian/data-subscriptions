@@ -1,7 +1,6 @@
 import datetime as dt
 import os
 
-from data_subscriptions.app import create_app
 from data_subscriptions.extensions import db
 from data_subscriptions.notifications.email_dispatcher import EmailDispatcher
 from data_subscriptions.notifications.user_notification_dispatcher import (
@@ -26,9 +25,6 @@ WHERE
 
 
 class BatchDispatcher:
-    def __init__(self):
-        self.app = create_app()
-
     def __call__(self):
         users = self.users_to_be_notified()
         for row in users:
@@ -38,10 +34,7 @@ class BatchDispatcher:
             user_notification()
 
     def users_to_be_notified(self):
-        with self.app.app_context():
-            return db.session.execute(
-                QUERY, {"start_time": self.last_notification_time()}
-            )
+        return db.session.execute(QUERY, {"start_time": self.last_notification_time()})
 
     def last_notification_time(self):
         return dt.datetime.now() - dt.timedelta(seconds=NOTIFICATION_FREQUENCY)
