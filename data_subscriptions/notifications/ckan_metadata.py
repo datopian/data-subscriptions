@@ -20,7 +20,7 @@ class CKANMetadata:
             try:
                 metadata[item_id] = endpoint(id=item_id)
             except errors.NotFound:
-                url = f"action = {self.action} id={item_id}"
+                url = f"action={self.action} id={item_id}"
                 logging.error(f"CKAN API NotFound error: {url}")
 
         return metadata
