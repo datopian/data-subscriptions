@@ -7,8 +7,11 @@ from data_subscriptions.notifications.user_notification_dispatcher import (
 )
 
 
-@pytest.fixture(scope="module")
-def subject():
+@pytest.fixture
+def subject(mocker):
+    mocker.patch(
+        "data_subscriptions.notifications.user_notification_dispatcher.CKANMetadata",
+    )
     return UserNotificationDispatcher("user-id-1", dt.datetime(2020, 1, 1))
 
 
@@ -23,9 +26,6 @@ def test_call(mocker, subject):
 def test_prepare(mocker, subject):
     activities = mocker.patch(
         "data_subscriptions.notifications.user_notification_dispatcher.ActivityForUser"
-    )
-    api = mocker.patch(
-        "data_subscriptions.notifications.user_notification_dispatcher.RemoteCKAN"
     )
     template = mocker.patch(
         "data_subscriptions.notifications.user_notification_dispatcher.EmailTemplate"
