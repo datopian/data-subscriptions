@@ -20,9 +20,9 @@ graph LR
   subgraph datasubscriptions["Data Subscriptions"]
     Worker -- "pulls dataset activity (updates)" --> ckanclassic["CKAN Classic"]
     Worker -- stores activity --> db[(Database)]
-    Worker --> sendgrid["SendGrid<br>(third-party)"]
-    Worker -- "pulls activity " --> db
-    sendgrid -- "sends email" --> user(("User"))
+    Worker -- prepares email --> sendgrid["SendGrid<br>(third-party)"]
+    Worker -- pulls activity --> db
+    sendgrid -- sends email --> user(("User"))
   end
 ```
 
