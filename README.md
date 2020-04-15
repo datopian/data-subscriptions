@@ -4,27 +4,11 @@ _Service to monitor and notify users about changes in datasets._
 
 Data Subscriptions is a service meant to notify users when CKAN datasets change. For the end-users, it works like this:
 
-```mermaid
-graph LR
-  subgraph ckan["CKAN Classic"]
-    curator((Data Curator)) -- updates metadata --> dataset["Dataset/Resource"]
-    curator -- updates data --> dataset
-    user((User)) -- subscribes --> dataset
-  end
-```
+[![](https://mermaid.ink/img/eyJjb2RlIjoiZ3JhcGggTFJcbiAgc3ViZ3JhcGggY2thbltcIkNLQU4gQ2xhc3NpY1wiXVxuICAgIGN1cmF0b3IoKERhdGEgQ3VyYXRvcikpIC0tIHVwZGF0ZXMgbWV0YWRhdGEgLS0-IGRhdGFzZXRbXCJEYXRhc2V0L1Jlc291cmNlXCJdXG4gICAgY3VyYXRvciAtLSB1cGRhdGVzIGRhdGEgLS0-IGRhdGFzZXRcbiAgICB1c2VyKChVc2VyKSkgLS0gc3Vic2NyaWJlcyAtLT4gZGF0YXNldFxuICBlbmRcbiIsIm1lcm1haWQiOnsidGhlbWUiOiJkZWZhdWx0In0sInVwZGF0ZUVkaXRvciI6ZmFsc2V9)](https://mermaid-js.github.io/mermaid-live-editor/#/edit/eyJjb2RlIjoiZ3JhcGggTFJcbiAgc3ViZ3JhcGggY2thbltcIkNLQU4gQ2xhc3NpY1wiXVxuICAgIGN1cmF0b3IoKERhdGEgQ3VyYXRvcikpIC0tIHVwZGF0ZXMgbWV0YWRhdGEgLS0-IGRhdGFzZXRbXCJEYXRhc2V0L1Jlc291cmNlXCJdXG4gICAgY3VyYXRvciAtLSB1cGRhdGVzIGRhdGEgLS0-IGRhdGFzZXRcbiAgICB1c2VyKChVc2VyKSkgLS0gc3Vic2NyaWJlcyAtLT4gZGF0YXNldFxuICBlbmRcbiIsIm1lcm1haWQiOnsidGhlbWUiOiJkZWZhdWx0In0sInVwZGF0ZUVkaXRvciI6ZmFsc2V9)
 
 Every 10 minutes, it communicates with CKAN Classic to store the latest updates in a local database. Every 30 minutes, it sends an aggregated notification to users. The worker sends notifications only to users with an active subscription to datasets changed in the past minutes. You can configure all the time frequencies via environment variables.
 
-```mermaid
-graph LR
-  subgraph datasubscriptions["Data Subscriptions"]
-    Worker -- "pulls dataset activity (updates)" --> ckanclassic["CKAN Classic"]
-    Worker -- stores activity --> db[(Database)]
-    Worker -- prepares email --> sendgrid["SendGrid<br>(third-party)"]
-    Worker -- pulls activity --> db
-    sendgrid -- sends email --> user(("User"))
-  end
-```
+[![](https://mermaid.ink/img/eyJjb2RlIjoiZ3JhcGggTFJcbiAgc3ViZ3JhcGggZGF0YXN1YnNjcmlwdGlvbnNbXCJEYXRhIFN1YnNjcmlwdGlvbnNcIl1cbiAgICBXb3JrZXIgLS0gXCJwdWxscyBkYXRhc2V0IGFjdGl2aXR5ICh1cGRhdGVzKVwiIC0tPiBja2FuY2xhc3NpY1tcIkNLQU4gQ2xhc3NpY1wiXVxuICAgIFdvcmtlciAtLSBzdG9yZXMgYWN0aXZpdHkgLS0-IGRiWyhEYXRhYmFzZSldXG4gICAgV29ya2VyIC0tIHByZXBhcmVzIGVtYWlsIC0tPiBzZW5kZ3JpZFtcIlNlbmRHcmlkPGJyPih0aGlyZC1wYXJ0eSlcIl1cbiAgICBXb3JrZXIgLS0gcHVsbHMgYWN0aXZpdHkgLS0-IGRiXG4gICAgc2VuZGdyaWQgLS0gc2VuZHMgZW1haWwgLS0-IHVzZXIoKFwiVXNlclwiKSlcbiAgZW5kIiwibWVybWFpZCI6eyJ0aGVtZSI6ImRlZmF1bHQifSwidXBkYXRlRWRpdG9yIjpmYWxzZX0)](https://mermaid-js.github.io/mermaid-live-editor/#/edit/eyJjb2RlIjoiZ3JhcGggTFJcbiAgc3ViZ3JhcGggZGF0YXN1YnNjcmlwdGlvbnNbXCJEYXRhIFN1YnNjcmlwdGlvbnNcIl1cbiAgICBXb3JrZXIgLS0gXCJwdWxscyBkYXRhc2V0IGFjdGl2aXR5ICh1cGRhdGVzKVwiIC0tPiBja2FuY2xhc3NpY1tcIkNLQU4gQ2xhc3NpY1wiXVxuICAgIFdvcmtlciAtLSBzdG9yZXMgYWN0aXZpdHkgLS0-IGRiWyhEYXRhYmFzZSldXG4gICAgV29ya2VyIC0tIHByZXBhcmVzIGVtYWlsIC0tPiBzZW5kZ3JpZFtcIlNlbmRHcmlkPGJyPih0aGlyZC1wYXJ0eSlcIl1cbiAgICBXb3JrZXIgLS0gcHVsbHMgYWN0aXZpdHkgLS0-IGRiXG4gICAgc2VuZGdyaWQgLS0gc2VuZHMgZW1haWwgLS0-IHVzZXIoKFwiVXNlclwiKSlcbiAgZW5kIiwibWVybWFpZCI6eyJ0aGVtZSI6ImRlZmF1bHQifSwidXBkYXRlRWRpdG9yIjpmYWxzZX0)
 
 This service also has a REST API to:
 
