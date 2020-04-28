@@ -70,3 +70,12 @@ def subscription_list():
         {"dataset_id": "b72159fe-67d8-4ea7-8313-af2bf92107101", "user_id": "user2"},
         {"dataset_id": "b72159fe-67d8-4ea7-8313-af2bf92107102", "user_id": "user2"},
     ]
+
+@pytest.fixture
+def all_subscription(db, subscription_list):
+    for x in [Subscription(**x) for x in subscription_list]: 
+        db.session.add(x)
+    db.session.commit()
+    
+    return subscription_list
+    

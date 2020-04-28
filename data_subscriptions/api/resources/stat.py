@@ -17,13 +17,13 @@ def get_user(user_id):
     result = CKANMetadata("user_show", [user_id])()
     if user_id in result:
         return result[user_id]
-    return None
+    return {"display_name": ""}
 
 def get_dataset(dataset_id):
     result = CKANMetadata("package_show", [dataset_id])()
     if dataset_id in result:
         return result[dataset_id]
-    return None
+    return {"name": ""}
     
 def prepare_stat(data):
     dataset_name = get_dataset(data.dataset_id)["name"]
