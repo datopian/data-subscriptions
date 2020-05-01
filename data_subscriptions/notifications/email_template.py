@@ -15,7 +15,7 @@ HTML = """
   <body>
     <p>Dear {user_name},</p>
 
-    <p>The following dataset(s) to which you are  have recently been updated on the ESO data portal:</p>
+    <p>The following dataset(s) to which you are subscribed have recently been updated on the ESO data portal:</p>
     {activities}
   </body>
 </html>
