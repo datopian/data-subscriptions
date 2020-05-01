@@ -35,7 +35,7 @@ HTML = """
     <p>Regards,</p>
     <p>ESO Data Portal Team</p>
     <p>nationalgridESO</p>
-    <p>box.OpenData.ESO@nationalgrideso.com</p>
+    <p><a href='mailto:box.OpenData.ESO@nationalgrideso.com'>box.OpenData.ESO@nationalgrideso.com</a></p>
   </body>
 </html>
 """
