@@ -83,31 +83,29 @@ class ActivityPresenter:
     def activity_msg_stream(self, activity):
 
         activity_stream_string_functions = {
-            'new resource': f"A new file has been added.",
-            'changed resource': f"A metadata for the resource has been udpated/",
-            'changed package': f"A metadata for the dataset has been udpated.",
-            'changed file': f"An existing file has been updated.",
-            'deleted resource': f"The dataset has been udpated.",
-            'deleted package': f"The dataset has been udpated."
-            }
-        
-        activity_type = activity["data"].get("body", {}).get('activity_type', False)
+            "new resource": f"A new file has been added.",
+            "changed resource": f"A metadata for the resource has been udpated.",
+            "changed package": f"A metadata for the dataset has been udpated.",
+            "changed file": f"An existing file has been updated.",
+            "deleted resource": f"The dataset has been udpated.",
+            "deleted package": f"The dataset has been udpated.",
+        }
+
+        activity_type = activity["data"].get("body", {}).get("activity_type", False)
         # Check API activity
         if activity_type:
             return activity_stream_string_functions[activity_type]
 
-        details = self.ckan_api.action.activity_detail_list(id=activity['id'])
+        details = self.ckan_api.action.activity_detail_list(id=activity["id"])
 
         # Check activity detail
         if len(details) == 1:
             detail = details[0]
-            object_type = detail['object_type']
-            new_activity_type = '%s %s' % (detail['activity_type'], object_type.lower())
+            object_type = detail["object_type"]
+            new_activity_type = "%s %s" % (detail["activity_type"], object_type.lower())
 
             if new_activity_type in activity_stream_string_functions:
-                    activity['activity_type'] = new_activity_type
-                    
-        if 'activity_type' in activity:
-            return activity_stream_string_functions[activity['activity_type']]
+                activity["activity_type"] = new_activity_type
 
-
+        if "activity_type" in activity:
+            return activity_stream_string_functions[activity["activity_type"]]
