@@ -11,12 +11,31 @@ HTML = """
   <head>
     <meta charset="utf-8" />
     <title>Datasets you subscribed were recently changed</title>
+    <style>
+        body {{padding : 0 5px}}
+        p {{margin: 0px;}}
+        a {{margin:0;}}
+        ul {{margin: 8px 1px 10px 1px;}}
+    </style>
   </head>
   <body>
-    <p>Dear {user_name},</p>
+    <p>Dear {user_name},</p><br>
 
-    <p>The following dataset(s) to which you are subscribed have recently been updated on the ESO data portal:</p>
+    <p>The following dataset(s) to which you are subscribed have recently been updated on the ESO data portal:</p></br>
+
+    <div>
     {activities}
+    <div>
+
+    <br>
+    <p>View recent updates to your subscribed datasets <a href='https://data.nationalgrideso.com/dashboard'>https://data.nationalgrideso.com/dashboard</a></p>
+    <p>Manage your subscriptions <a href='https://data.nationalgrideso.com/settings'>https://data.nationalgrideso.com/settings</a><p>
+    <br>
+
+    <p>Regards,</p>
+    <p>ESO Data Portal Team</p>
+    <p>nationalgridESO</p>
+    <p>box.OpenData.ESO@nationalgrideso.com</p>
   </body>
 </html>
 """
@@ -52,7 +71,7 @@ class ActivityPresenter:
     def __call__(self):
         name = self.dataset["title"]
         pkg_url = self.dataset["organization"]["name"] + "/" + self.dataset["name"]
-        html = "<a href='http://localhost:4000/%s'>%s</a>:<br>" % (pkg_url, name)
+        html = "<a href='http://localhost:4000/%s'>%s</a>:" % (pkg_url, name)
         html += f"<ul>"
         items = []
         for activity in self.activities:
