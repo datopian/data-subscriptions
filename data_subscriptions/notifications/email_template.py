@@ -2,6 +2,8 @@ from itertools import groupby
 from ckanapi import RemoteCKAN
 import os
 
+FRONTEND_SITE_URL = os.getenv("FRONTEND_SITE_URL")
+
 CKAN_URL = os.getenv("CKAN_URL")
 CKAN_API_KEY = os.getenv("CKAN_API_KEY")
 
@@ -28,8 +30,8 @@ HTML = """
     <div>
 
     <br>
-    <p>View recent updates to your subscribed datasets <a href='https://data.nationalgrideso.com/dashboard'>https://data.nationalgrideso.com/dashboard</a></p>
-    <p>Manage your subscriptions <a href='https://data.nationalgrideso.com/settings'>https://data.nationalgrideso.com/settings</a><p>
+    <p><a href='{frontend_url}/dashboard'>View recent updates to your subscribed datasets.</a></p>
+    <p><a href='{frontend_url}/settings'>Manage your subscriptions.</a><p>
     <br>
 
     <p>Regards,</p>
@@ -53,7 +55,11 @@ class EmailTemplate:
             metadata = self.datasets[activities[0]["object_id"]]
             html = ActivityPresenter(metadata, activities)()
             html_list += html
-        return HTML.format(user_name=self.user["name"], activities=html_list)
+        return HTML.format(
+            user_name=self.user["name"],
+            activities=html_list,
+            frontend_url=FRONTEND_SITE_URL,
+        )
 
     def activities_by_resource(self):
         activities = []
@@ -71,7 +77,7 @@ class ActivityPresenter:
     def __call__(self):
         name = self.dataset["title"]
         pkg_url = self.dataset["organization"]["name"] + "/" + self.dataset["name"]
-        html = "<a href='http://localhost:4000/%s'>%s</a>:" % (pkg_url, name)
+        html = "<a href='%s/%s'>%s</a>:" % (FRONTEND_SITE_URL, pkg_url, name)
         html += f"<ul>"
         items = []
         for activity in self.activities:
