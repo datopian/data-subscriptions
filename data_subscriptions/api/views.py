@@ -5,6 +5,7 @@ from data_subscriptions.api.resources import (
     NonsubscribableDataset,
     Subscription,
     User,
+    Stat,
 )
 
 blueprint = Blueprint("api", __name__, url_prefix="/api/v1")
@@ -20,4 +21,8 @@ api.add_resource(
 
 api.add_resource(
     User, "/user/<string:user_id>",
+)
+
+api.add_resource(
+    Stat, "/stat",
 )
