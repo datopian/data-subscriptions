@@ -16,7 +16,7 @@ class EmailDispatcher:
         self.message = Mail(
             from_email=(MAILER_FROM_EMAIL, MAILER_FROM_NAME),
             to_emails=self.email,
-            subject="Datasets you subscribed were recently changed",
+            subject="A dataset you have subscribed to has been updated",
         )
 
     def __call__(self, content):
