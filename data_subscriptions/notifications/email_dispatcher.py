@@ -2,11 +2,12 @@ import logging
 import os
 
 from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Content, Mail, MimeType
+from sendgrid.helpers.mail import Mail
 
 API_KEY = os.getenv("SENDGRID_API_KEY")
 MAILER_FROM_EMAIL = os.getenv("MAILER_FROM_EMAIL")
 MAILER_FROM_NAME = os.getenv("MAILER_FROM_NAME")
+SENDGRID_TEMPLATE_ID = os.getenv("SENDGRID_TEMPLATE_ID")
 
 
 class EmailDispatcher:
@@ -19,8 +20,9 @@ class EmailDispatcher:
             subject="A dataset you have subscribed to has been updated",
         )
 
-    def __call__(self, content):
-        self.message.content = Content(MimeType.html, content)
+    def __call__(self, template_data):
+        self.message.template_id = SENDGRID_TEMPLATE_ID
+        self.message.dynamic_template_data = template_data
         try:
             self.response = self.client.send(self.message)
         except Exception as e:

@@ -65,12 +65,12 @@ def test_prepare(mocker, subject):
         {"object_id": "1"},
     ]
     template = mocker.patch(
-        "data_subscriptions.notifications.user_notification_dispatcher.EmailTemplate"
+        "data_subscriptions.notifications.user_notification_dispatcher.EmailTemplateData"
     )
     subject.prepare()
 
     assert subject._activities == activities.return_value.return_value
-    assert subject._content == template.return_value.html_content.return_value
+    assert subject._template_data == template.return_value.template_data.return_value
     activities.assert_called_once_with(subject.user_id, subject.start_time)
 
 
@@ -87,6 +87,10 @@ def test_send_with_activities(mocker, subject):
         "data_subscriptions.notifications.user_notification_dispatcher.EmailDispatcher"
     )
     mocker.patch.object(subject, "_activities", [{"dataset-1": {"id": "1"}}])
-    mocker.patch.object(subject, "_content", "<html></html>")
+    mocker.patch.object(
+        subject,
+        "_template_data",
+        {"packages": [{"title": "dataset-1", "url": "", "activities": []}]},
+    )
     subject.send()
-    dispatcher.return_value.assert_called_once_with(subject._content)
+    dispatcher.return_value.assert_called_once_with(subject._template_data)

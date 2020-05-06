@@ -6,7 +6,7 @@ from ckanapi import RemoteCKAN
 from data_subscriptions.worker.activity_for_user import ActivityForUser
 from data_subscriptions.notifications.ckan_metadata import CKANMetadata
 from data_subscriptions.notifications.email_dispatcher import EmailDispatcher
-from data_subscriptions.notifications.email_template import EmailTemplate
+from data_subscriptions.notifications.email_template import EmailTemplateData
 
 
 CKAN_URL = os.getenv("CKAN_URL")
@@ -20,7 +20,7 @@ class UserNotificationDispatcher:
         self._datasets = None
         self._user = None
         self._activities = []
-        self._content = ""
+        self._template_data = None
         self.ckan_api = RemoteCKAN(CKAN_URL, apikey=CKAN_API_KEY)
 
     def __call__(self):
@@ -39,8 +39,9 @@ class UserNotificationDispatcher:
                 "email": self.user["email"],
                 "name": self.user["display_name"],
             }
-            email_template = EmailTemplate(user, self.datasets, self._activities)
-            self._content = email_template.html_content()
+
+            email_template = EmailTemplateData(user, self.datasets, self._activities)
+            self._template_data = email_template.template_data()
 
     def has_data_for_template(self):
         return bool(self.user) and len(self._activities) > 0
@@ -48,7 +49,7 @@ class UserNotificationDispatcher:
     def send(self):
         if self.has_data_for_template():
             email_dispatcher = EmailDispatcher(self.user["email"])
-            email_dispatcher(self._content)
+            email_dispatcher(self._template_data)
 
     @property
     def datasets(self):
