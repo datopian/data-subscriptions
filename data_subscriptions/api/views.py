@@ -15,9 +15,14 @@ api = Api(blueprint)
 api.add_resource(
     NonsubscribableDataset, "/nonsubscribable_datasets/<string:dataset_id>",
 )
+
 api.add_resource(
-    Subscription, "/subscription/<string:dataset_id>",
+    Subscription,
+    "/subscription/<string:dataset_id>",
+    endpoint="subscription/<string:dataset_id>",
 )
+
+api.add_resource(Subscription, "/subscription", endpoint="/subscription/")
 
 api.add_resource(
     User, "/user/<string:user_id>",

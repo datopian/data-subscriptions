@@ -18,32 +18,76 @@ def can_subscribe(user_id, dataset_id):
 
 
 class Subscription(Resource):
-    def get(self, dataset_id):
+    def __init__(self):
+        self.DATASET = "DATASET"
+        self.NEW_DATASETS = "NEW_DATASETS"
+
+    def get(self, dataset_id=False):
         user_id = request.args.get("user_id")
+
+        if dataset_id:
+            subscription = Model.query.filter_by(
+                dataset_id=dataset_id, user_id=user_id
+            ).first_or_404()
+            return {
+                "dataset_id": subscription.dataset_id,
+                "user_id": subscription.user_id,
+                "sub_type": self.DATASET,
+            }
         subscription = Model.query.filter_by(
-            dataset_id=dataset_id, user_id=user_id
+            sub_type=self.NEW_DATASETS, user_id=user_id
         ).first_or_404()
         return {
-            "dataset_id": subscription.dataset_id,
             "user_id": subscription.user_id,
+            "subscribed": True,
+            "sub_type": self.NEW_DATASETS,
         }
 
-    def post(self, dataset_id):
+    def post(self, dataset_id=False):
         data = request.get_json(force=True)
         user_id = data["user_id"]
         status = 422
-        if can_subscribe(user_id, dataset_id):
-            db.session.add(Model(dataset_id=dataset_id, user_id=user_id))
-            db.session.commit()
-            status = 201
-        return {"dataset_id": dataset_id, "user_id": user_id}, status
+        if dataset_id:
+            if can_subscribe(user_id, dataset_id):
+                db.session.add(
+                    Model(
+                        user_id=user_id, sub_type=self.DATASET, dataset_id=dataset_id,
+                    )
+                )
+                db.session.commit()
+                status = 201
+            return (
+                {
+                    "dataset_id": dataset_id,
+                    "user_id": user_id,
+                    "sub_type": self.DATASET,
+                },
+                status,
+            )
+        db.session.add(Model(user_id=user_id, sub_type=self.NEW_DATASETS))
+        db.session.commit()
+        status = 201
+        return (
+            {"subscribed": True, "user_id": user_id, "sub_type": self.NEW_DATASETS,},
+            status,
+        )
 
-    def delete(self, dataset_id):
+    def delete(self, dataset_id=False):
         data = request.get_json(force=True)
         user_id = data["user_id"]
         status = 204
+        if dataset_id:
+            is_subscribed = Model.query.filter_by(
+                dataset_id=dataset_id, user_id=user_id,
+            ).one_or_none()
+            if is_subscribed:
+                db.session.delete(is_subscribed)
+                db.session.commit()
+            else:
+                return None, 422
+            return None, status
         is_subscribed = Model.query.filter_by(
-            dataset_id=dataset_id, user_id=user_id
+            user_id=user_id, sub_type=self.DATASET
         ).one_or_none()
         if is_subscribed:
             db.session.delete(is_subscribed)
