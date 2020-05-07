@@ -3,7 +3,7 @@ from data_subscriptions.models.base import BaseModel
 import enum
 
 
-class SubType(enum.Enum):
+class Kind(enum.Enum):
     DATASET = "dataset"
     NEW_DATASETS = "new_datasets"
 
@@ -11,12 +11,12 @@ class SubType(enum.Enum):
 class Subscription(db.Model, BaseModel):
     dataset_id = db.Column(db.Text(), nullable=True)
     user_id = db.Column(db.Text(), nullable=False)
-    sub_type = db.Column(db.Enum(SubType), nullable=True)
+    kind = db.Column(db.Enum(Kind), nullable=True)
     __table_args__ = (db.UniqueConstraint("dataset_id", "user_id"),)
 
     def __repr__(self):
-        return "<Subscription dataset_id=%s user_id=%s sub_type=%s>" % (
+        return "<Subscription dataset_id=%s user_id=%s kind=%s>" % (
             self.dataset_id,
             self.user_id,
-            self.sub_type,
+            self.kind,
         )

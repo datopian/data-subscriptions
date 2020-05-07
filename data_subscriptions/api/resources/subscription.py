@@ -32,15 +32,15 @@ class Subscription(Resource):
             return {
                 "dataset_id": subscription.dataset_id,
                 "user_id": subscription.user_id,
-                "sub_type": self.DATASET,
+                "kind": self.DATASET,
             }
         subscription = Model.query.filter_by(
-            sub_type=self.NEW_DATASETS, user_id=user_id
+            kind=self.NEW_DATASETS, user_id=user_id
         ).first_or_404()
         return {
             "user_id": subscription.user_id,
             "subscribed": True,
-            "sub_type": self.NEW_DATASETS,
+            "kind": self.NEW_DATASETS,
         }
 
     def post(self, dataset_id=False):
@@ -50,25 +50,19 @@ class Subscription(Resource):
         if dataset_id:
             if can_subscribe(user_id, dataset_id):
                 db.session.add(
-                    Model(
-                        user_id=user_id, sub_type=self.DATASET, dataset_id=dataset_id,
-                    )
+                    Model(user_id=user_id, kind=self.DATASET, dataset_id=dataset_id,)
                 )
                 db.session.commit()
                 status = 201
             return (
-                {
-                    "dataset_id": dataset_id,
-                    "user_id": user_id,
-                    "sub_type": self.DATASET,
-                },
+                {"dataset_id": dataset_id, "user_id": user_id, "kind": self.DATASET,},
                 status,
             )
-        db.session.add(Model(user_id=user_id, sub_type=self.NEW_DATASETS))
+        db.session.add(Model(user_id=user_id, kind=self.NEW_DATASETS))
         db.session.commit()
         status = 201
         return (
-            {"subscribed": True, "user_id": user_id, "sub_type": self.NEW_DATASETS,},
+            {"subscribed": True, "user_id": user_id, "kind": self.NEW_DATASETS,},
             status,
         )
 
@@ -87,7 +81,7 @@ class Subscription(Resource):
                 return None, 422
             return None, status
         is_subscribed = Model.query.filter_by(
-            user_id=user_id, sub_type=self.DATASET
+            user_id=user_id, kind=self.DATASET
         ).one_or_none()
         if is_subscribed:
             db.session.delete(is_subscribed)
