@@ -9,10 +9,6 @@ from data_subscriptions.notifications.email_dispatcher import EmailDispatcher
 from data_subscriptions.notifications.email_template import EmailTemplateData
 
 
-CKAN_URL = os.getenv("CKAN_URL")
-CKAN_API_KEY = os.getenv("CKAN_API_KEY")
-
-
 class UserNotificationDispatcher:
     """
     Collect information for a user notification and dispatch it.
@@ -25,7 +21,6 @@ class UserNotificationDispatcher:
         self._user = None
         self._activities = []
         self._template_data = None
-        self.ckan_api = RemoteCKAN(CKAN_URL, apikey=CKAN_API_KEY)
 
     def __call__(self):
         self.prepare()
