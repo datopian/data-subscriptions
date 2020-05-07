@@ -4,6 +4,7 @@ from flask import Response
 from data_subscriptions.models import Subscription as Model
 from data_subscriptions.notifications.ckan_metadata import CKANMetadata
 
+
 def create_csv(dataset, columns):
     header = ",".join(columns)
     content = header + "\n"
@@ -13,11 +14,13 @@ def create_csv(dataset, columns):
         content += row + "\n"
     return content
 
+
 def get_user(data_id, action):
     result = CKANMetadata(action, [data_id])()
     if data_id in result:
         return result[data_id]
     return {}
+
 
 def prepare_stat(data):
     dataset_name = ""
@@ -36,6 +39,8 @@ def prepare_stat(data):
         "dataset_id": data.dataset_id,
         "dataset_name": dataset_name,
     }
+
+
 class Stat(Resource):
     def get(self):
         dataset = Model.query.all()
@@ -53,6 +58,8 @@ class Stat(Resource):
             return Response(
                 csv,
                 mimetype="text/csv",
-                headers={"Content-disposition": "attachment; filename=data_subscribers.csv"},
+                headers={
+                    "Content-disposition": "attachment; filename=data_subscribers.csv"
+                },
             )
         return {"result": list(result)}
