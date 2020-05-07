@@ -11,6 +11,10 @@ SENDGRID_TEMPLATE_ID = os.getenv("SENDGRID_TEMPLATE_ID")
 
 
 class EmailDispatcher:
+    """
+    Dispatch an email via SendGrid.
+    """
+
     def __init__(self, email):
         self.email = email
         self.client = SendGridAPIClient(API_KEY)

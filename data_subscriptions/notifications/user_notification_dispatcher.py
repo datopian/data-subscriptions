@@ -14,6 +14,10 @@ CKAN_API_KEY = os.getenv("CKAN_API_KEY")
 
 
 class UserNotificationDispatcher:
+    """
+    Collect information for a user notification and dispatch it.
+    """
+
     def __init__(self, user_id, time_of_last_notification):
         self.user_id = user_id
         self.start_time = time_of_last_notification

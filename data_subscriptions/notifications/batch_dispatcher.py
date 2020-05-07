@@ -25,6 +25,10 @@ WHERE
 
 
 class BatchDispatcher:
+    """
+    Dispatch a notification for each user requiring one at this moment.
+    """
+
     def __call__(self):
         users = self.users_to_be_notified()
         for row in users:

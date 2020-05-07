@@ -18,6 +18,10 @@ WHERE
 
 
 class ActivityForUser:
+    """
+    Collect activity relevant to a user, since a given start time.
+    """
+
     def __init__(self, user_id, start_time):
         self.user_id = user_id
         self.start_time = start_time

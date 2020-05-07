@@ -12,6 +12,10 @@ CKAN_API_KEY = os.getenv("CKAN_API_KEY")
 
 
 class EmailTemplateData:
+    """
+    Build metadata for email template in SendGrid.
+    """
+
     def __init__(self, user, datasets, activities):
         self.user = user
         self.datasets = datasets
@@ -35,6 +39,10 @@ class EmailTemplateData:
 
 
 class DatasetActivity:
+    """
+    Build metadata, of a single dataset, for email template in SendGrid.
+    """
+
     def __init__(self, dataset, activities):
         self.dataset = dataset
         self.activities = activities

@@ -6,6 +6,10 @@ from data_subscriptions.worker.latest_ckan_activity import LatestCKANActivity
 
 
 class DatasetActivityList:
+    """
+    Extract and load external CKAN activity into the local database.
+    """
+
     def __call__(self):
         self.extract()
         self.load()

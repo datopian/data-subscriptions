@@ -8,6 +8,10 @@ CKAN_API_KEY = os.getenv("CKAN_API_KEY")
 
 
 class CKANMetadata:
+    """
+    Fetch information about a CKAN object via its HTTP API.
+    """
+
     def __init__(self, action, entity_ids):
         self.action = action
         self.entity_ids = entity_ids
