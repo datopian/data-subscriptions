@@ -1,117 +1,80 @@
 from itertools import groupby
-from ckanapi import RemoteCKAN
+from operator import itemgetter
 import os
+from urllib.parse import urljoin
+
+from ckanapi import RemoteCKAN
 
 FRONTEND_SITE_URL = os.getenv("FRONTEND_SITE_URL")
 
 CKAN_URL = os.getenv("CKAN_URL")
 CKAN_API_KEY = os.getenv("CKAN_API_KEY")
 
-HTML = """
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>Datasets you subscribed were recently changed</title>
-    <style>
-        body {{padding : 0 5px}}
-        p {{margin: 0px;}}
-        a {{margin:0;}}
-        ul {{margin: 8px 1px 10px 1px;}}
-    </style>
-  </head>
-  <body>
-    <p>Dear {user_name},</p><br>
 
-    <p>The following dataset(s) to which you are subscribed have recently been updated on the ESO data portal:</p></br>
-
-    <div>
-    {activities}
-    <div>
-
-    <br>
-    <p><a href='{frontend_url}/dashboard'>View recent updates to your subscribed datasets.</a></p>
-    <p><a href='{frontend_url}/settings'>Manage your subscriptions.</a><p>
-    <br>
-
-    <p>Regards,</p>
-    <p>ESO Data Portal Team</p>
-    <p>nationalgridESO</p>
-    <p><a href='mailto:box.OpenData.ESO@nationalgrideso.com'>box.OpenData.ESO@nationalgrideso.com</a></p>
-  </body>
-</html>
-"""
-
-
-class EmailTemplate:
+class EmailTemplateData:
     def __init__(self, user, datasets, activities):
         self.user = user
         self.datasets = datasets
         self.activities = activities
 
-    def html_content(self):
-        html_list = ""
-        for activities in self.activities_by_resource():
+    def template_data(self):
+        data = {"packages": []}
+        data.update({"user": self.user})
+        for activities in self.activities_by_dataset():
             metadata = self.datasets[activities[0]["object_id"]]
-            html = ActivityPresenter(metadata, activities)()
-            html_list += html
-        return HTML.format(
-            user_name=self.user["name"],
-            activities=html_list,
-            frontend_url=FRONTEND_SITE_URL,
-        )
+            dataset_item = DatasetActivity(metadata, activities)()
+            data["packages"].append(dataset_item)
+        return data
 
-    def activities_by_resource(self):
+    def activities_by_dataset(self):
         activities = []
-        for _, xs in groupby(self.activities, lambda x: x["object_id"]):
+        self.activities = sorted(self.activities, key=itemgetter("object_id"))
+        for _, xs in groupby(self.activities, key=itemgetter("object_id")):
             activities.append(list(xs))
         return activities
 
 
-class ActivityPresenter:
+class DatasetActivity:
     def __init__(self, dataset, activities):
         self.dataset = dataset
         self.activities = activities
         self.ckan_api = RemoteCKAN(CKAN_URL, apikey=CKAN_API_KEY)
 
     def __call__(self):
-        name = self.dataset["title"]
-        pkg_url = self.dataset["organization"]["name"] + "/" + self.dataset["name"]
-        html = "<a href='%s/%s'>%s</a>:" % (FRONTEND_SITE_URL, pkg_url, name)
-        html += f"<ul>"
-        items = []
+        pkg_url = urljoin(FRONTEND_SITE_URL, self.dataset["organization"]["name"])
+        items = {
+            "title": self.dataset["title"],
+            "url": "%s/%s" % (pkg_url, self.dataset["name"]),
+            "activities": [],
+        }
+
         for activity in self.activities:
-            item = "<li>%s</li>" % (self.activity_msg_stream(activity))
-            items.append(item)
+            if self.get_activity_type(activity) not in items["activities"]:
+                items["activities"].append(self.get_activity_type(activity))
+        return items
 
-        return html + "".join(set(items)) + "</ul>"
-
-    def activity_msg_stream(self, activity):
-
-        activity_stream_string_functions = {
-            "new resource": f"A new file has been added.",
-            "changed resource": f"A metadata for the resource has been udpated.",
-            "changed package": f"A metadata for the dataset has been udpated.",
-            "changed file": f"An existing file has been updated.",
-            "deleted resource": f"The dataset has been udpated.",
-            "deleted package": f"The dataset has been udpated.",
+    def get_activity_type(self, activity):
+        messages_for_activity_type = {
+            "new resource": "A new file has been added.",
+            "changed resource": "A metadata for the resource has been udpated.",
+            "changed package": "A metadata for the dataset has been udpated.",
+            "changed file": "An existing file has been updated.",
+            "deleted resource": "The dataset has been udpated.",
+            "deleted package": "The dataset has been udpated.",
         }
 
         activity_type = activity["data"].get("body", {}).get("activity_type", False)
-        # Check API activity
+
         if activity_type:
-            return activity_stream_string_functions[activity_type]
+            return messages_for_activity_type[activity_type]
 
         details = self.ckan_api.action.activity_detail_list(id=activity["id"])
 
-        # Check activity detail
         if len(details) == 1:
             detail = details[0]
             object_type = detail["object_type"]
             new_activity_type = "%s %s" % (detail["activity_type"], object_type.lower())
-
-            if new_activity_type in activity_stream_string_functions:
-                activity["activity_type"] = new_activity_type
+            activity["activity_type"] = new_activity_type
 
         if "activity_type" in activity:
-            return activity_stream_string_functions[activity["activity_type"]]
+            return messages_for_activity_type[activity.get("activity_type")]
