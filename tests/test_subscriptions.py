@@ -11,7 +11,7 @@ def test_get_subscription_200_subscription_exists(client, db, subscription):
     response = client.get(f"/api/v1/subscription/{dataset_id}?user_id={user_id}")
     assert response.status_code == 200
     data = response.get_json()
-    assert data == {"dataset_id": dataset_id, "user_id": user_id}
+    assert data == {"dataset_id": dataset_id, "user_id": user_id, "sub_type": "DATASET"}
 
 
 def test_get_subscription_404_subscription_doesnt_exist(client, db, subscription):
