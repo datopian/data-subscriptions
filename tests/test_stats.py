@@ -13,7 +13,7 @@ result = {
 @patch(
     "data_subscriptions.api.resources.stat.prepare_stat", MagicMock(return_value=result)
 )
-def test_get_subscription_200_subscription_exists(client, all_subscription):
+def test_get_subscriber_report(client, all_subscription):
     # Return 200 OK when json is returned and all keys present
     response = client.get(f"/api/v1/stat")
     assert response.status_code == 200
@@ -27,7 +27,7 @@ def test_get_subscription_200_subscription_exists(client, all_subscription):
     assert "subscribed_at" in data["result"][0].keys()
 
 
-def test_get_subscription_200_subscription_exists(client, all_subscription):
+def test_get_subscriber_report_CSV_exists(client, all_subscription):
     # Return 200 OK when csv is returned
     response = client.get(f"/api/v1/stat?download=yes")
     assert response.status_code == 200

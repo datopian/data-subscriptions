@@ -25,8 +25,12 @@ def get_user(data_id, action):
 def prepare_stat(data):
     dataset_name = ""
     user_name = ""
-    dataset = get_user(data.dataset_id, "package_show")
+    dataset = {}
     user = get_user(data.user_id, "user_show")
+    dataset_id = ""
+    if data.dataset_id:
+        dataset = get_user(data.dataset_id, "package_show")
+        dataset_id = data.dataset_id
     if "name" in dataset:
         dataset_name = dataset["name"]
     if "display_name" in user:
@@ -36,8 +40,9 @@ def prepare_stat(data):
         "subscribed_at": str(data.created_at),
         "user_id": data.user_id,
         "user_name": user_name,
-        "dataset_id": data.dataset_id,
+        "dataset_id": dataset_id,
         "dataset_name": dataset_name,
+        "kind": str(data.kind)[5:],
     }
 
 
@@ -53,6 +58,7 @@ class Stat(Resource):
                 "Username",
                 "Dataset ID",
                 "Dataset Name",
+                "Kind",
             ]
             csv = create_csv(result, columns)
             return Response(

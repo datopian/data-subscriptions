@@ -39,16 +39,19 @@ Available methods:
 
 ### Subscriptions
 
-**Endpoint: `/subscription/<string:dataset_id>`**
+**Endpoint: `/subscription`**
 
 Available methods:
 
-- `GET` - Get if given user is subscribed to given dataset.
-  - params: `user_id`
-- `POST` - Subscribe a user to a dataset.
-  - body: `{"user_id": <string:user_id>}`
-- `DELETE` - Unsubscribe s user from a dataset.
-  - body: `{"user_id": <string:user_id>}`
+- `POST` - Check the status of a subscription.
+  - body: `{"dataset_id": <string:dataset_id>, "kind": "DATASET", "user_id": <string:user_id>}`
+  - body: `{"kind": "NEW_DATASETS", "user_id": <string:user_id>}`
+- `POST` - Subscribe a user to notifications.
+  - body: `{"dataset_id": <string:dataset_id>, "kind": "DATASET", "user_id": <string:user_id>}`
+  - body: `{"kind": "NEW_DATASETS", "user_id": <string:user_id>}`
+- `DELETE` - Unsubscribe a user from notifications.
+  - body: `{"dataset_id": <string:dataset_id>, "kind": "DATASET", "user_id": <string:user_id>}`
+  - body: `{"kind": "NEW_DATASETS", "user_id": <string:user_id>}`
 
 ### User
 
@@ -57,6 +60,17 @@ Available methods:
 Available methods:
 
 - `GET` - Get list of subscriptions for a given user.
+
+### 
+
+**Endpoint: `/stat`**
+
+Available methods:
+
+- `GET` - Get report of all subscribers in JSON.
+
+- `GET` - Get report of all subscribers in CSV.
+  - param: `download=yes`
 
 ## Development
 

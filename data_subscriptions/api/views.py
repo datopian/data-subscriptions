@@ -6,6 +6,7 @@ from data_subscriptions.api.resources import (
     Subscription,
     User,
     Stat,
+    SubscriptionStatus,
 )
 
 blueprint = Blueprint("api", __name__, url_prefix="/api/v1")
@@ -17,12 +18,12 @@ api.add_resource(
 )
 
 api.add_resource(
-    Subscription,
-    "/subscription/<string:dataset_id>",
-    endpoint="subscription/<string:dataset_id>",
+    Subscription, "/subscription",
 )
 
-api.add_resource(Subscription, "/subscription", endpoint="/subscription/")
+api.add_resource(
+    SubscriptionStatus, "/subscriptionStatus",
+)
 
 api.add_resource(
     User, "/user/<string:user_id>",

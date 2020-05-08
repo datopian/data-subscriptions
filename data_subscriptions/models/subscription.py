@@ -1,9 +1,10 @@
+from enum import Enum
+
 from data_subscriptions.extensions import db
 from data_subscriptions.models.base import BaseModel
-import enum
 
 
-class Kind(enum.Enum):
+class Kind(Enum):
     DATASET = "dataset"
     NEW_DATASETS = "new_datasets"
 
