@@ -7,7 +7,9 @@ from data_subscriptions.schemas import SubscriptionSchema as Schema
 
 class User(Resource):
     def get(self, user_id):
-        datasets = db.session.query(Model).filter_by(user_id=user_id).all()
+        datasets = (
+            db.session.query(Model).filter_by(user_id=user_id, kind="DATASET").all()
+        )
         datasetsSchema = Schema(many=True)
         if datasets:
             subscribed_datasets = {"subscriptions": datasetsSchema.dump(datasets)}

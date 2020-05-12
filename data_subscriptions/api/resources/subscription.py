@@ -3,6 +3,7 @@ from flask_restful import Resource, request
 from data_subscriptions.extensions import db
 
 from data_subscriptions.models import Subscription as Model, NonsubscribableDataset
+from data_subscriptions.notifications.ckan_metadata import CKANMetadata
 
 
 def can_subscribe(user_id, dataset_id=False):
@@ -20,6 +21,13 @@ def can_subscribe(user_id, dataset_id=False):
         return not db.session.query(
             Model.query.filter_by(kind="NEW_DATASETS", user_id=user_id).exists()
         ).scalar()
+
+
+def get_data(data_id, action, attr):
+    result = CKANMetadata(action, [data_id])()
+    if data_id in result and attr in result[data_id]:
+        return result[data_id][attr]
+    return ""
 
 
 def removeSub(is_subscribed):
@@ -87,15 +95,23 @@ class Subscription(Resource):
         self.POST = "POST"
 
     def post(self):
+        response = {}
         data = request.get_json(force=True)
         user_id = data["user_id"]
+        user_name = get_data(user_id, "user_show", "display_name")
         kind = data["kind"]
-        response = {}
         status = 422
         if kind == self.DATASET and can_subscribe(user_id, data["dataset_id"]):
             dataset_id = data["dataset_id"]
+            dataset_name = get_data(dataset_id, "package_show", "name")
             db.session.add(
-                Model(user_id=user_id, kind=self.DATASET, dataset_id=dataset_id,)
+                Model(
+                    user_id=user_id,
+                    kind=self.DATASET,
+                    dataset_id=dataset_id,
+                    dataset_name=dataset_name,
+                    user_name=user_name,
+                )
             )
             db.session.commit()
             status = 201
@@ -104,12 +120,15 @@ class Subscription(Resource):
                     "dataset_id": dataset_id,
                     "user_id": user_id,
                     "kind": self.DATASET,
+                    "user_name": user_name,
                     "subscribed": True,
                 },
                 status,
             )
         elif kind == self.NEW_DATASETS and can_subscribe(user_id):
-            db.session.add(Model(user_id=user_id, kind=self.NEW_DATASETS))
+            db.session.add(
+                Model(user_id=user_id, kind=self.NEW_DATASETS, user_name=user_name)
+            )
             db.session.commit()
             status = 201
             response = (
@@ -124,6 +143,7 @@ class Subscription(Resource):
         return response
 
     def delete(self):
+
         data = request.get_json(force=True)
         user_id = data["user_id"]
         kind = data["kind"]
