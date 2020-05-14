@@ -59,6 +59,18 @@ def subscription():
     return Subscription(
         dataset_id="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
         user_id="00000000-0000-0000-0000-000000000000",
+        user_name="julietezekwe",
+        dataset_name="test_dataset",
+        kind="DATASET",
+    )
+
+
+@pytest.fixture
+def new_dataset_subscription():
+    return Subscription(
+        user_id="00000000-0000-0000-0000-000000000000",
+        kind="NEW_DATASETS",
+        user_name="julietezekwe",
     )
 
 
@@ -73,9 +85,43 @@ def subscription_list():
 
 
 @pytest.fixture
-def all_subscription(db, subscription_list):
-    for x in [Subscription(**x) for x in subscription_list]:
+def all_subscription_list():
+    return [
+        {
+            "dataset_id": "b72159fe-67d8-4ea7-8313-af2bf9210799",
+            "user_id": "user1",
+            "user_name": "julietezekwe1",
+            "dataset_name": "test_dataset1",
+            "kind": "DATASET",
+        },
+        {
+            "dataset_id": "b72159fe-67d8-4ea7-8313-af2bf92107100",
+            "user_id": "user1",
+            "user_name": "julietezekwe1",
+            "dataset_name": "test_dataset1",
+            "kind": "DATASET",
+        },
+        {
+            "dataset_id": "b72159fe-67d8-4ea7-8313-af2bf92107101",
+            "user_id": "user2",
+            "user_name": "julietezekwe2",
+            "dataset_name": "test_dataset2",
+            "kind": "DATASET",
+        },
+        {
+            "dataset_id": "b72159fe-67d8-4ea7-8313-af2bf92107102",
+            "user_name": "julietezekwe2",
+            "dataset_name": "test_dataset2",
+            "user_id": "user2",
+            "kind": "DATASET",
+        },
+    ]
+
+
+@pytest.fixture
+def all_subscription(db, all_subscription_list):
+    for x in [Subscription(**x) for x in all_subscription_list]:
         db.session.add(x)
     db.session.commit()
 
-    return subscription_list
+    return all_subscription_list

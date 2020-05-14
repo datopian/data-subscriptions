@@ -37,18 +37,28 @@ Available methods:
 - `POST` - Make a dataset non-subscribable, i.e., disable subscriptions.
 - `DELETE` - Delete a dataset from list of non-subscribable datasets, i.e., make it subscribable again.
 
-### Subscriptions
+### Subscription Status
 
-**Endpoint: `/subscription/<string:dataset_id>`**
+**Endpoint: `/subscription_status`**
 
 Available methods:
 
-- `GET` - Get if given user is subscribed to given dataset.
-  - params: `user_id`
-- `POST` - Subscribe a user to a dataset.
-  - body: `{"user_id": <string:user_id>}`
-- `DELETE` - Unsubscribe s user from a dataset.
-  - body: `{"user_id": <string:user_id>}`
+- `POST` - Check the a user's subscription status.
+  - body: `{"dataset_id": <string:dataset_id>, "kind": "DATASET", "user_id": <string:user_id>}` //for a single dataset subscription
+  - body: `{"kind": "NEW_DATASETS", "user_id": <string:user_id>}` //for a new dataset subscription
+
+### Subscriptions
+
+**Endpoint: `/subscription`**
+
+Available methods:
+
+- `POST` - Subscribe a user to notifications.
+  - body: `{"dataset_id": <string:dataset_id>, "kind": "DATASET", "user_id": <string:user_id>}` //for a single dataset subscription
+  - body: `{"kind": "NEW_DATASETS", "user_id": <string:user_id>}` //for a new dataset subscription
+- `DELETE` - Unsubscribe a user from notifications.
+  - body: `{"dataset_id": <string:dataset_id>, "kind": "DATASET", "user_id": <string:user_id>}` //for a single dataset subscription
+  - body: `{"kind": "NEW_DATASETS", "user_id": <string:user_id>}`  //for a new dataset subscription
 
 ### User
 
@@ -56,7 +66,17 @@ Available methods:
 
 Available methods:
 
-- `GET` - Get list of subscriptions for a given user.
+- `GET` - Get list of subscriptions for a given authorized user.
+
+### Subscription Report
+
+**Endpoint: `/stat`**
+
+Available methods:
+
+- `GET` - Get report of all subscribers in JSON.
+- `GET` - Get report of all subscribers in CSV.
+  - param: `download=yes`
 
 ## Development
 
