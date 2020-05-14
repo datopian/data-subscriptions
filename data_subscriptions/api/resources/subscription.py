@@ -23,14 +23,14 @@ def can_subscribe(user_id, dataset_id=False):
         ).scalar()
 
 
-def get_data(data_id, action, attr):
+def get_ckan_metadata(data_id, action, attr):
     result = CKANMetadata(action, [data_id])()
     if data_id in result and attr in result[data_id]:
         return result[data_id][attr]
     return ""
 
 
-def removeSub(is_subscribed):
+def remove_sub(is_subscribed):
     db.session.delete(is_subscribed)
     db.session.commit()
     return None, 204
@@ -41,7 +41,7 @@ def remove_dataset_subscription(dataset_id, user_id):
         dataset_id=dataset_id, user_id=user_id, kind="DATASET",
     ).one_or_none()
     if is_subscribed:
-        return removeSub(is_subscribed)
+        return remove_sub(is_subscribed)
     else:
         return None, 422
 
@@ -51,7 +51,7 @@ def remove_new_dataset_subscription(user_id):
         user_id=user_id, kind="NEW_DATASETS"
     ).one_or_none()
     if is_subscribed:
-        return removeSub(is_subscribed)
+        return remove_sub(is_subscribed)
     else:
         return None, 422
 
@@ -98,12 +98,12 @@ class Subscription(Resource):
         response = {}
         data = request.get_json(force=True)
         user_id = data["user_id"]
-        user_name = get_data(user_id, "user_show", "display_name")
+        user_name = get_ckan_metadata(user_id, "user_show", "display_name")
         kind = data["kind"]
         status = 422
         if kind == self.DATASET and can_subscribe(user_id, data["dataset_id"]):
             dataset_id = data["dataset_id"]
-            dataset_name = get_data(dataset_id, "package_show", "name")
+            dataset_name = get_ckan_metadata(dataset_id, "package_show", "name")
             db.session.add(
                 Model(
                     user_id=user_id,

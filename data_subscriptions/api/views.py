@@ -22,7 +22,7 @@ api.add_resource(
 )
 
 api.add_resource(
-    SubscriptionStatus, "/subscriptionStatus",
+    SubscriptionStatus, "/subscription_status",
 )
 
 api.add_resource(

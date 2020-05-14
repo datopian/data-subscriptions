@@ -9,7 +9,7 @@ def test_get_dataset_subscription_200_subscription_exists(client, db, subscripti
     dataset_id = subscription.dataset_id
     user_id = subscription.user_id
     data = json.dumps({"user_id": user_id, "dataset_id": dataset_id, "kind": "DATASET"})
-    response = client.post(f"/api/v1/subscriptionStatus", data=data)
+    response = client.post(f"/api/v1/subscription_status", data=data)
     assert response.status_code == 200
     data = response.get_json()
     assert data == {"dataset_id": dataset_id, "user_id": user_id, "kind": "DATASET"}
@@ -23,7 +23,7 @@ def test_get_new_datasets_subscription_200_subscription_exists(
     db.session.commit()
     user_id = new_dataset_subscription.user_id
     data = json.dumps({"user_id": user_id, "kind": "NEW_DATASETS"})
-    response = client.post(f"/api/v1/subscriptionStatus", data=data)
+    response = client.post(f"/api/v1/subscription_status", data=data)
     assert response.status_code == 200
     data = response.get_json()
     assert data == {"user_id": user_id, "kind": "NEW_DATASETS"}
@@ -36,7 +36,7 @@ def test_get_dataset_subscription_404_subscription_doesnt_exist(
     dataset_id = subscription.dataset_id
     user_id = subscription.user_id
     data = json.dumps({"user_id": user_id, "dataset_id": dataset_id, "kind": "DATASET"})
-    response = client.post(f"/api/v1/subscriptionStatus", data=data)
+    response = client.post(f"/api/v1/subscription_status", data=data)
     assert response.status_code == 404
 
 
@@ -46,7 +46,7 @@ def test_get_new_dataset_subscription_404_subscription_doesnt_exist(
     # Return 404 NOT FOUND when subscription does not exist
     user_id = new_dataset_subscription.user_id
     data = json.dumps({"user_id": user_id, "kind": "NEW_DATASETS"})
-    response = client.post(f"/api/v1/subscriptionStatus", data=data)
+    response = client.post(f"/api/v1/subscription_status", data=data)
     assert response.status_code == 404
 
 
