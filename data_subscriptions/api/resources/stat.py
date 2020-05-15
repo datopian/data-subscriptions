@@ -19,8 +19,8 @@ def prepare_stat(data):
         "subscribed_at": str(data.created_at),
         "user_id": data.user_id,
         "user_name": data.user_name,
-        "dataset_id": data.dataset_id,
-        "dataset_name": data.dataset_name,
+        "dataset_id": "N/A" if data.dataset_id is None else data.dataset_id,
+        "dataset_name": "N/A" if data.dataset_name is None else data.dataset_name,
         "kind": str(data.kind)[5:],
     }
 
