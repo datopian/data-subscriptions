@@ -24,13 +24,13 @@ def subject(mocker):
         "data_subscriptions.notifications.user_notification_dispatcher.CKANMetadata",
         new=ckan_metadata,
     )
-    return UserNotificationDispatcher("user-id-1", dt.datetime(2020, 1, 1))
+    return UserNotificationDispatcher("user-id-1", [], dt.datetime(2020, 1, 1))
 
 
 def test_call(mocker, subject):
     mocker.patch.object(subject, "prepare")
     mocker.patch.object(subject, "send")
-    mocker.patch.object(subject, "_activities", [{"object_id": "42"}])
+    mocker.patch.object(subject, "activities", [{"object_id": "42"}])
     subject()
     subject.prepare.assert_called_once()
     subject.send.assert_called_once()
@@ -48,7 +48,7 @@ def test_call_without_user(mocker, subject):
     mocker.patch(
         "data_subscriptions.notifications.user_notification_dispatcher.CKANMetadata",
     )
-    subject = UserNotificationDispatcher("user-id-1", dt.datetime(2020, 1, 1))
+    subject = UserNotificationDispatcher("user-id-1", [], dt.datetime(2020, 1, 1))
     mocker.patch.object(subject, "prepare")
     mocker.patch.object(subject, "send")
     subject()
@@ -57,21 +57,16 @@ def test_call_without_user(mocker, subject):
 
 
 def test_prepare(mocker, subject):
-    activities = mocker.patch(
-        "data_subscriptions.notifications.user_notification_dispatcher.ActivityForUser"
-    )
-    activities.return_value.return_value = [
-        {"object_id": "1"},
-        {"object_id": "1"},
+    subject.activities = [
+        {"dataset_id": "1", "activity": {"object_id": "1"}},
+        {"dataset_id": "1", "activity": {"object_id": "1"}},
     ]
     template = mocker.patch(
         "data_subscriptions.notifications.user_notification_dispatcher.EmailTemplateData"
     )
     subject.prepare()
 
-    assert subject._activities == activities.return_value.return_value
     assert subject._template_data == template.return_value.template_data.return_value
-    activities.assert_called_once_with(subject.user_id, subject.start_time)
 
 
 def test_send_without_activities(mocker, subject):
@@ -86,7 +81,7 @@ def test_send_with_activities(mocker, subject):
     dispatcher = mocker.patch(
         "data_subscriptions.notifications.user_notification_dispatcher.EmailDispatcher"
     )
-    mocker.patch.object(subject, "_activities", [{"dataset-1": {"id": "1"}}])
+    mocker.patch.object(subject, "activities", [{"dataset-1": {"id": "1"}}])
     mocker.patch.object(
         subject,
         "_template_data",

@@ -1,4 +1,5 @@
 from itertools import groupby
+from operator import itemgetter
 
 from data_subscriptions.extensions import db
 
@@ -60,7 +61,9 @@ class ActivityList:
         self._all = None
 
     def by_user(self):
-        return groupby(self.all, key=lambda row: row["user_id"])
+        keys = self.all.keys()
+        all_with_keys = map(lambda row: dict(zip(keys, row)), self.all)
+        return groupby(all_with_keys, itemgetter("user_id"))
 
     @property
     def all(self):
