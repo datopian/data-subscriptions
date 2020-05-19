@@ -5,6 +5,10 @@ from ckanapi import RemoteCKAN
 
 
 class LatestCKANActivity:
+    """
+    Fetch all the CKAN activity list, since a given start time.
+    """
+
     def __init__(self, url=None, start_time=None, proposed_limit=1_000):
         self.url = url or os.getenv("CKAN_URL")
         self.start_time = start_time

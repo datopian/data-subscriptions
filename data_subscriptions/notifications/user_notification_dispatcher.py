@@ -1,27 +1,27 @@
 import logging
 import os
+from operator import itemgetter
 
 from ckanapi import RemoteCKAN
 
-from data_subscriptions.worker.activity_for_user import ActivityForUser
 from data_subscriptions.notifications.ckan_metadata import CKANMetadata
 from data_subscriptions.notifications.email_dispatcher import EmailDispatcher
 from data_subscriptions.notifications.email_template import EmailTemplateData
 
 
-CKAN_URL = os.getenv("CKAN_URL")
-CKAN_API_KEY = os.getenv("CKAN_API_KEY")
-
-
 class UserNotificationDispatcher:
-    def __init__(self, user_id, time_of_last_notification):
+    """
+    Collect information for a user notification and dispatch it.
+    """
+
+    def __init__(self, user_id, activities, time_of_last_notification):
         self.user_id = user_id
+        self.activities = activities
         self.start_time = time_of_last_notification
+
         self._datasets = None
         self._user = None
-        self._activities = []
         self._template_data = None
-        self.ckan_api = RemoteCKAN(CKAN_URL, apikey=CKAN_API_KEY)
 
     def __call__(self):
         self.prepare()
@@ -32,7 +32,6 @@ class UserNotificationDispatcher:
             logging.error(message)
 
     def prepare(self):
-        self._activities = ActivityForUser(self.user_id, self.start_time)()
         if self.has_data_for_template():
             user = {
                 "id": self.user_id,
@@ -40,11 +39,11 @@ class UserNotificationDispatcher:
                 "name": self.user["display_name"],
             }
 
-            email_template = EmailTemplateData(user, self.datasets, self._activities)
+            email_template = EmailTemplateData(user, self.datasets, self.activities)
             self._template_data = email_template.template_data()
 
     def has_data_for_template(self):
-        return bool(self.user) and len(self._activities) > 0
+        return bool(self.user) and len(self.activities) > 0
 
     def send(self):
         if self.has_data_for_template():
@@ -54,7 +53,7 @@ class UserNotificationDispatcher:
     @property
     def datasets(self):
         if not self._datasets:
-            ids = [x["object_id"] for x in self._activities]
+            ids = set(map(itemgetter("dataset_id"), self.activities))
             self._datasets = CKANMetadata("package_show", ids)()
         return self._datasets
 
