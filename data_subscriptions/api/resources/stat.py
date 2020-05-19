@@ -4,31 +4,31 @@ from flask import Response
 from data_subscriptions.models import Subscription as Model
 
 
-def create_csv(dataset, columns):
+def create_csv(subscription, columns):
     header = ",".join(columns)
     content = header + "\n"
 
-    for data in dataset:
+    for data in subscription:
         row = ",".join(data.values())
         content += row + "\n"
     return content
 
 
-def prepare_stat(data):
+def prepare_stat(subscription):
     return {
-        "subscribed_at": str(data.created_at),
-        "user_id": data.user_id,
-        "user_name": data.user_name,
-        "dataset_id": "N/A" if data.dataset_id is None else data.dataset_id,
-        "dataset_name": "N/A" if data.dataset_name is None else data.dataset_name,
-        "kind": str(data.kind)[5:],
+        "subscribed_at": str(subscription.created_at),
+        "user_id": subscription.user_id,
+        "user_name": subscription.user_name,
+        "dataset_id": subscription.dataset_id,
+        "dataset_name": subscription.dataset_name,
+        "kind": str(subscription.kind)[5:],
     }
 
 
 class Stat(Resource):
     def get(self):
-        dataset = Model.query.all()
-        result = map(prepare_stat, dataset)
+        subscriptions = Model.query.all()
+        result = map(prepare_stat, subscriptions)
         download = request.args.get("download")
         if download == "yes":
             columns = [
