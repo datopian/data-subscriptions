@@ -4,7 +4,15 @@ from flask import Response
 from data_subscriptions.models import Subscription as Model
 
 
-def create_csv(subscription, columns):
+def create_csv(subscription):
+    columns = [
+        "Subscribed At",
+        "User ID",
+        "Username",
+        "Dataset ID",
+        "Dataset Name",
+        "Kind",
+    ]
     header = ",".join(columns)
     content = header + "\n"
 
@@ -31,15 +39,7 @@ class Stat(Resource):
         result = map(prepare_stat, subscriptions)
         download = request.args.get("download")
         if download == "yes":
-            columns = [
-                "Subscribed At",
-                "User ID",
-                "Username",
-                "Dataset ID",
-                "Dataset Name",
-                "Kind",
-            ]
-            csv = create_csv(result, columns)
+            csv = create_csv(result)
             return Response(
                 csv,
                 mimetype="text/csv",

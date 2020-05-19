@@ -2,7 +2,7 @@ import datetime as dt
 import json
 from unittest.mock import Mock, MagicMock, patch
 
-from data_subscriptions.api.resources.stat import prepare_stat
+from data_subscriptions.api.resources.stat import create_csv, prepare_stat
 from data_subscriptions.models import Subscription
 from data_subscriptions.models.subscription import Kind
 
@@ -76,3 +76,20 @@ def test_prepare_stat_for_new_datasets_subscription():
         "dataset_name": None,
         "kind": "NEW_DATASETS",
     }
+
+
+def test_create_csv():
+    subscription = Subscription(
+        created_at=dt.datetime(2020, 12, 31),
+        user_id="1",
+        user_name="Laura",
+        dataset_id=None,
+        dataset_name=None,
+        kind=Kind.NEW_DATASETS,
+    )
+    subscription_as_dict = prepare_stat(subscription)
+    assert (
+        create_csv(subscription_as_dict)
+        == """
+    """
+    )
