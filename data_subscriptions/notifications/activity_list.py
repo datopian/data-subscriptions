@@ -20,8 +20,8 @@ FROM
     activity->>'activity_type' = 'new package'
   )
 WHERE
-  subscription.kind = 'NEW_DATASETS' AND
-  (activity->>'timestamp')::timestamptz > :start_time
+  (subscription.kind = 'NEW_DATASETS') AND
+  ((activity->>'timestamp')::timestamptz > :start_time)
 
 UNION ALL
 
@@ -41,9 +41,9 @@ FROM
     activity->>'object_id' = subscription.dataset_id
   )
 WHERE
-  (subscription.kind = 'DATASET') OR (subscription.kind IS NULL) AND
-  activity->>'activity_type' != 'new package' AND
-  (activity->>'timestamp')::timestamptz > :start_time
+  (subscription.kind = 'DATASET' OR subscription.kind IS NULL) AND
+  (activity->>'activity_type' != 'new package') AND
+  ((activity->>'timestamp')::timestamptz > :start_time)
 
 ORDER BY
   user_id,
