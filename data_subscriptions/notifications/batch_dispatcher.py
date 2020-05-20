@@ -2,7 +2,7 @@ import datetime as dt
 import os
 
 from data_subscriptions.extensions import db
-from data_subscriptions.notifications.activity_list import ActivityList
+from data_subscriptions.notifications.activity_groups import ActivityList
 from data_subscriptions.notifications.email_dispatcher import EmailDispatcher
 from data_subscriptions.notifications.user_notification_dispatcher import (
     UserNotificationDispatcher,
