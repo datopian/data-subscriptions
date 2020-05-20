@@ -62,7 +62,7 @@ class DatasetActivity:
 
     def get_activity_type(self, activity):
         messages_for_activity_type = {
-            "new package": "The dataset has been created.",
+            "new package": "A new dataset has been created.",
             "new resource": "A new file has been added.",
             "changed resource": "The metadata for a file has been udpated.",
             "changed package": "The metadata for the dataset has been udpated.",
