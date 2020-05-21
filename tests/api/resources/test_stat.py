@@ -72,24 +72,14 @@ def test_prepare_stat_for_new_datasets_subscription():
         "subscribed_at": "2020-12-31 00:00:00",
         "user_id": "1",
         "user_name": "Laura",
-        "dataset_id": None,
-        "dataset_name": None,
+        "dataset_id": "N/A",
+        "dataset_name": "N/A",
         "kind": "NEW_DATASETS",
     }
 
 
-def test_create_csv():
-    subscription = Subscription(
-        created_at=dt.datetime(2020, 12, 31),
-        user_id="1",
-        user_name="Laura",
-        dataset_id=None,
-        dataset_name=None,
-        kind=Kind.NEW_DATASETS,
-    )
-    subscription_as_dict = prepare_stat(subscription)
+def test_create_csv_for_dataset_subscription(all_subscription):
     assert (
-        create_csv(subscription_as_dict)
-        == """
-    """
+        create_csv(all_subscription)
+        == "Subscribed At,User ID,Username,Dataset ID,Dataset Name,Kind\nb72159fe-67d8-4ea7-8313-af2bf9210799,user1,julietezekwe1,test_dataset1,DATASET\nb72159fe-67d8-4ea7-8313-af2bf92107100,user1,julietezekwe1,test_dataset1,DATASET\nb72159fe-67d8-4ea7-8313-af2bf92107101,user2,julietezekwe2,test_dataset2,DATASET\nb72159fe-67d8-4ea7-8313-af2bf92107102,julietezekwe2,test_dataset2,user2,DATASET\n"
     )

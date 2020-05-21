@@ -27,8 +27,12 @@ def prepare_stat(subscription):
         "subscribed_at": str(subscription.created_at),
         "user_id": subscription.user_id,
         "user_name": subscription.user_name,
-        "dataset_id": subscription.dataset_id,
-        "dataset_name": subscription.dataset_name,
+        "dataset_id": "N/A"
+        if subscription.dataset_id is None
+        else subscription.dataset_id,
+        "dataset_name": "N/A"
+        if subscription.dataset_name is None
+        else subscription.dataset_name,
         "kind": str(subscription.kind)[5:],
     }
 
