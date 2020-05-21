@@ -31,11 +31,10 @@ class EmailTemplateData:
         return data
 
     def activities_by_dataset(self):
-        activities = []
-        self.activities = sorted(self.activities, key=itemgetter("object_id"))
-        for _, xs in groupby(self.activities, key=itemgetter("object_id")):
-            activities.append(list(xs))
-        return activities
+        xs = []
+        for _, grouper in groupby(self.activities, itemgetter("dataset_id")):
+            xs.append([x["activity"] for x in grouper])
+        return xs
 
 
 class DatasetActivity:
@@ -63,6 +62,7 @@ class DatasetActivity:
 
     def get_activity_type(self, activity):
         messages_for_activity_type = {
+            "new package": "A new dataset has been created.",
             "new resource": "A new file has been added.",
             "changed resource": "The metadata for a file has been udpated.",
             "changed package": "The metadata for the dataset has been udpated.",
