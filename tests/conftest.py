@@ -95,6 +95,13 @@ def all_subscription_list():
             "kind": "DATASET",
         },
         {
+            "dataset_id": "b72159fe-67d8-4ea7-8313-af2bf9210799",
+            "user_id": "user2",
+            "user_name": "julietezekwe1",
+            "dataset_name": "test_dataset1",
+            "kind": "DATASET",
+        },
+        {
             "dataset_id": "b72159fe-67d8-4ea7-8313-af2bf92107100",
             "user_id": "user1",
             "user_name": "julietezekwe1",
@@ -125,3 +132,32 @@ def all_subscription(db, all_subscription_list):
     db.session.commit()
 
     return all_subscription_list
+
+
+@pytest.fixture
+def meta_fixture(mocker):
+    def ckan_metadata(action, *args, **kwargs):
+        mock = mocker.MagicMock(name="ckan_metadata")
+        if action == "package_show":
+            response = {
+                "b72159fe-67d8-4ea7-8313-af2bf9210799": {
+                    "title": "random-dataset-title",
+                    "name": "dataset-1-name",
+                    "id": "b72159fe-67d8-4ea7-8313-af2bf9210799",
+                    "organization": {"name": "org-1"},
+                }
+            }
+
+        elif action == "user_show":
+            response = {
+                "user1": {"email": "user1@gmail.com", "display_name": "nouser"},
+                "user2": {"email": "user2@gmail.com", "display_name": "nouser"},
+            }
+
+        mock.return_value = response
+        return mock
+
+    mocker.patch(
+        "data_subscriptions.notifications.user_notification_dispatcher.CKANMetadata",
+        new=ckan_metadata,
+    )
