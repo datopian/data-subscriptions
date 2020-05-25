@@ -29,5 +29,5 @@ class Dataset(Resource):
             Model.query.filter_by(dataset_id=dataset_id, kind="DATASET").delete()
             db.session.commit()
         else:
-            return {"status" : "success"}, 422
+            return {"status": "success"}, 422
         return None, 204
