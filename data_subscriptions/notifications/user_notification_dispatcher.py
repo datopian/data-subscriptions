@@ -103,9 +103,8 @@ class NonSubscribableNotifiationDispatcher:
         self._template_data.update({"non_subs_package": dataset_meta})
 
     def send(self):
-        print(self._template_data)
-        # email_dispatcher = EmailDispatcher(self.user["email"])
-        # email_dispatcher(self._template_data)
+        email_dispatcher = EmailDispatcher(self.user["email"])
+        email_dispatcher(self._template_data)
 
     @property
     def dataset(self):
