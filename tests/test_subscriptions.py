@@ -138,7 +138,7 @@ def test_delete_subscription_by_dataset(
 def test_delete_subscription_by_non_exist_dataset(
     meta_fixture, client, db, all_subscription, all_subscription_list
 ):
-    # Return 422 NO CONTENT when subscription delete by non exist dataset id.
+    # Return 422 UNPROCESSABLE ENTITY when subscription delete by non exist dataset id.
     data = json.dumps({"dataset_id": "nonexist-dataset-id"})
     response = client.delete(f"/api/v1/dataset", data=data)
     assert response.status_code == 422
