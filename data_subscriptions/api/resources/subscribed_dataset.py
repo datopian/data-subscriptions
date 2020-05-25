@@ -27,6 +27,8 @@ class Dataset(Resource):
         datasets = Model.query.filter_by(dataset_id=dataset_id, kind="DATASET").all()
         if len(datasets) > 0:
             Model.query.filter_by(dataset_id=dataset_id, kind="DATASET").delete()
+            for item in datasets:
+                NonSubscribableNotifiationDispatcher(dataset_id, item.user_id)()
             db.session.commit()
         else:
             return {"status": "success"}, 422

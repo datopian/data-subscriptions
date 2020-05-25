@@ -83,7 +83,7 @@ class NonSubscribableNotifiationDispatcher:
         self._template_data = {}
 
     def __call__(self):
-        if self._dataset and self._user:
+        if self.dataset and self.user:
             self.template_prepare()
             self.send()
 
@@ -103,8 +103,9 @@ class NonSubscribableNotifiationDispatcher:
         self._template_data.update({"non_subs_package": dataset_meta})
 
     def send(self):
-        email_dispatcher = EmailDispatcher(self.user["email"])
-        email_dispatcher(self._template_data)
+        print(self._template_data)
+        # email_dispatcher = EmailDispatcher(self.user["email"])
+        # email_dispatcher(self._template_data)
 
     @property
     def dataset(self):
