@@ -3,8 +3,8 @@ from flask_restful import Resource, request
 from data_subscriptions.extensions import db
 from data_subscriptions.models import Subscription as Model
 from data_subscriptions.schemas import SubscriptionSchema as Schema
-from data_subscriptions.notifications.user_notification_dispatcher import (
-    NonSubscribableNotifiationDispatcher,
+from data_subscriptions.notifications.not_subscribable_notification_dispatcher import (
+    NotSubscribableNotifiationDispatcher,
 )
 
 
@@ -21,15 +21,13 @@ class User(Resource):
 
 
 class Dataset(Resource):
-    def delete(self):
-        data = request.get_json(force=True)
-        dataset_id = data["dataset_id"]
+    def delete(self, dataset_id):
         datasets = Model.query.filter_by(dataset_id=dataset_id, kind="DATASET").all()
         if len(datasets) > 0:
             Model.query.filter_by(dataset_id=dataset_id, kind="DATASET").delete()
             for item in datasets:
-                NonSubscribableNotifiationDispatcher(dataset_id, item.user_id)()
+                NotSubscribableNotifiationDispatcher(dataset_id, item.user_id)()
             db.session.commit()
         else:
-            return {"status": "success"}, 422
-        return None, 204
+            return None, 422
+        return {"status": "success"}, 200

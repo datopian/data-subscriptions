@@ -135,7 +135,7 @@ def all_subscription(db, all_subscription_list):
 
 
 @pytest.fixture
-def meta_fixture(mocker):
+def ckan_meta_fixture(mocker):
     def ckan_metadata(action, *args, **kwargs):
         mock = mocker.MagicMock(name="ckan_metadata")
         if action == "package_show":
@@ -157,7 +157,4 @@ def meta_fixture(mocker):
         mock.return_value = response
         return mock
 
-    mocker.patch(
-        "data_subscriptions.notifications.user_notification_dispatcher.CKANMetadata",
-        new=ckan_metadata,
-    )
+    return ckan_metadata

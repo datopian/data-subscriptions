@@ -127,20 +127,29 @@ def test_delete_unsubscribe(client, db, subscription):
 
 
 def test_delete_subscription_by_dataset(
-    meta_fixture, client, db, all_subscription, all_subscription_list
+    mocker, ckan_meta_fixture, client, db, all_subscription, all_subscription_list
 ):
-    # Return 204 NO CONTENT when subscription deleted by dataset id.
-    data = json.dumps({"dataset_id": all_subscription[0]["dataset_id"]})
-    response = client.delete(f"/api/v1/dataset", data=data)
-    assert response.status_code == 204
+    # Return 200 OK when subscription deleted by dataset id.
+
+    mocker.patch(
+        "data_subscriptions.notifications.not_subscribable_notification_dispatcher.CKANMetadata",
+        new=ckan_meta_fixture,
+    )
+    dataset_id = all_subscription[0]["dataset_id"]
+    response = client.delete(f"/api/v1/dataset/{dataset_id}")
+    assert response.status_code == 200
 
 
 def test_delete_subscription_by_non_exist_dataset(
-    meta_fixture, client, db, all_subscription, all_subscription_list
+    mocker, ckan_meta_fixture, client, db, all_subscription, all_subscription_list
 ):
     # Return 422 UNPROCESSABLE ENTITY when subscription delete by non exist dataset id.
-    data = json.dumps({"dataset_id": "nonexist-dataset-id"})
-    response = client.delete(f"/api/v1/dataset", data=data)
+    mocker.patch(
+        "data_subscriptions.notifications.not_subscribable_notification_dispatcher.CKANMetadata",
+        new=ckan_meta_fixture,
+    )
+    dataset_id = "nonexist-dataset-id"
+    response = client.delete(f"/api/v1/dataset/{dataset_id}")
     assert response.status_code == 422
 
 

@@ -31,7 +31,7 @@ api.add_resource(
 )
 
 api.add_resource(
-    Dataset, "/dataset",
+    Dataset, "/dataset/<string:dataset_id>",
 )
 
 api.add_resource(
