@@ -30,4 +30,4 @@ class Dataset(Resource):
             db.session.commit()
         else:
             return None, 422
-        return {"status": "success"}, 200
+        return None, 204
