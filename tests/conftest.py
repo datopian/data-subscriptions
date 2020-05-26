@@ -67,6 +67,18 @@ def subscription():
 
 
 @pytest.fixture
+def subscription_data():
+    return Subscription(
+        user_id="user-id-1",
+        email="alice@example.com",
+        kind="DATASET",
+        dataset_id="dataset_id",
+        dataset_name="dataset_name",
+        user_name="Alice",
+    )
+
+
+@pytest.fixture
 def new_dataset_subscription():
     return Subscription(
         user_id="00000000-0000-0000-0000-000000000000",
