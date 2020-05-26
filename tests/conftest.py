@@ -60,6 +60,7 @@ def subscription():
         dataset_id="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
         user_id="00000000-0000-0000-0000-000000000000",
         user_name="julietezekwe",
+        email="alice@example.com",
         dataset_name="test_dataset",
         kind="DATASET",
     )
@@ -71,6 +72,7 @@ def new_dataset_subscription():
         user_id="00000000-0000-0000-0000-000000000000",
         kind="NEW_DATASETS",
         user_name="julietezekwe",
+        email="alice@example.com",
     )
 
 
@@ -91,6 +93,7 @@ def all_subscription_list():
             "dataset_id": "b72159fe-67d8-4ea7-8313-af2bf9210799",
             "user_id": "user1",
             "user_name": "julietezekwe1",
+            "email": "alice@example.com",
             "dataset_name": "test_dataset1",
             "kind": "DATASET",
         },
@@ -98,6 +101,7 @@ def all_subscription_list():
             "dataset_id": "b72159fe-67d8-4ea7-8313-af2bf92107100",
             "user_id": "user1",
             "user_name": "julietezekwe1",
+            "email": "alice@example.com",
             "dataset_name": "test_dataset1",
             "kind": "DATASET",
         },
@@ -105,14 +109,16 @@ def all_subscription_list():
             "dataset_id": "b72159fe-67d8-4ea7-8313-af2bf92107101",
             "user_id": "user2",
             "user_name": "julietezekwe2",
+            "email": "alice@example.com",
             "dataset_name": "test_dataset2",
             "kind": "DATASET",
         },
         {
             "dataset_id": "b72159fe-67d8-4ea7-8313-af2bf92107102",
-            "user_name": "julietezekwe2",
-            "dataset_name": "test_dataset2",
             "user_id": "user2",
+            "user_name": "julietezekwe2",
+            "email": "alice@example.com",
+            "dataset_name": "test_dataset2",
             "kind": "DATASET",
         },
     ]

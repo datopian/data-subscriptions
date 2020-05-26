@@ -46,6 +46,7 @@ def subscriptions():
                     Subscription(
                         dataset_id=dataset_id,
                         user_id=user_id,
+                        email="julietezekwe@gmail.com",
                         user_name=f"User {user_id}",
                         dataset_name=dataset_id,
                         kind=kind,
@@ -55,6 +56,7 @@ def subscriptions():
         Subscription(
             dataset_id="b",
             user_id="3",
+            email="julietezekwe@gmail.com",
             user_name=f"User 3",
             dataset_name="b",
             kind="DATASET",
