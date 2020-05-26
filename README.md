@@ -70,12 +70,11 @@ Available methods:
 
 ### Dataset
 
-**Endpoint: `/dataset`**
+**Endpoint: `/dataset/<string:dataset_id>`
 
 Available methods:
 
 - `DELETE` - Delete the subscriptions for given dataset.
-  - body: `{"dataset_id": <string:dataset_id> }`
 
 ### Subscription Report
 
