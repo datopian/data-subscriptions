@@ -1,7 +1,6 @@
 import datetime as dt
 
 import pytest
-
 from data_subscriptions.notifications.user_notification_dispatcher import (
     UserNotificationDispatcher,
 )
@@ -15,7 +14,7 @@ def subject(mocker):
             response = {"42": {"object_id": "42"}}
         elif action == "user_show":
             response = {
-                "user-id-1": {"email": "alice@example.com", "display_name": "Alice"}
+                "user-id-1": {"email": "alice@example.com", "user_name": "Alice"}
             }
         mock.return_value = response
         return mock
@@ -27,7 +26,9 @@ def subject(mocker):
     return UserNotificationDispatcher("user-id-1", [], dt.datetime(2020, 1, 1))
 
 
-def test_call(mocker, subject):
+def test_call(mocker, subject, client, db, subscription_data):
+    db.session.add(subscription_data)
+    db.session.commit()
     mocker.patch.object(subject, "prepare")
     mocker.patch.object(subject, "send")
     mocker.patch.object(subject, "activities", [{"object_id": "42"}])
@@ -36,7 +37,9 @@ def test_call(mocker, subject):
     subject.send.assert_called_once()
 
 
-def test_call_without_activities(mocker, subject):
+def test_call_without_activities(mocker, subject, db, subscription_data):
+    db.session.add(subscription_data)
+    db.session.commit()
     mocker.patch.object(subject, "prepare")
     mocker.patch.object(subject, "send")
     subject()
@@ -44,7 +47,9 @@ def test_call_without_activities(mocker, subject):
     subject.send.assert_not_called()
 
 
-def test_call_without_user(mocker, subject):
+def test_call_without_user(mocker, subject, db, subscription_data):
+    db.session.add(subscription_data)
+    db.session.commit()
     mocker.patch(
         "data_subscriptions.notifications.user_notification_dispatcher.CKANMetadata",
     )
@@ -56,7 +61,9 @@ def test_call_without_user(mocker, subject):
     subject.send.assert_not_called()
 
 
-def test_prepare(mocker, subject):
+def test_prepare(mocker, subject, db, subscription_data):
+    db.session.add(subscription_data)
+    db.session.commit()
     subject.activities = [
         {"dataset_id": "1", "activity": {"object_id": "1"}},
         {"dataset_id": "1", "activity": {"object_id": "1"}},
@@ -69,7 +76,9 @@ def test_prepare(mocker, subject):
     assert subject._template_data == template.return_value.template_data.return_value
 
 
-def test_send_without_activities(mocker, subject):
+def test_send_without_activities(mocker, subject, db, subscription_data):
+    db.session.add(subscription_data)
+    db.session.commit()
     dispatcher = mocker.patch(
         "data_subscriptions.notifications.user_notification_dispatcher.EmailDispatcher"
     )
@@ -77,7 +86,9 @@ def test_send_without_activities(mocker, subject):
     dispatcher.return_value.assert_not_called()
 
 
-def test_send_with_activities(mocker, subject):
+def test_send_with_activities(mocker, subject, db, subscription_data):
+    db.session.add(subscription_data)
+    db.session.commit()
     dispatcher = mocker.patch(
         "data_subscriptions.notifications.user_notification_dispatcher.EmailDispatcher"
     )

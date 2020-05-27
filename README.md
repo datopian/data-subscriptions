@@ -54,8 +54,8 @@ Available methods:
 Available methods:
 
 - `POST` - Subscribe a user to notifications.
-  - body: `{"dataset_id": <string:dataset_id>, "kind": "DATASET", "user_id": <string:user_id>}` //for a single dataset subscription
-  - body: `{"kind": "NEW_DATASETS", "user_id": <string:user_id>}` //for a new dataset subscription
+  - body: `{"dataset_id": <string:dataset_id>, "kind": "DATASET", "user_id": <string:user_id>, "username": <string:username>, "email": <string:email> }` //for a single dataset subscription
+  - body: `{"kind": "NEW_DATASETS", "user_id": <string:user_id>, "username": <string:username>, "email": <string:email>}` //for a new dataset subscription
 - `DELETE` - Unsubscribe a user from notifications.
   - body: `{"dataset_id": <string:dataset_id>, "kind": "DATASET", "user_id": <string:user_id>}` //for a single dataset subscription
   - body: `{"kind": "NEW_DATASETS", "user_id": <string:user_id>}`  //for a new dataset subscription

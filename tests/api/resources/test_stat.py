@@ -81,5 +81,5 @@ def test_prepare_stat_for_new_datasets_subscription():
 def test_create_csv_for_dataset_subscription(all_subscription):
     assert (
         create_csv(all_subscription)
-        == "Subscribed At,User ID,Username,Dataset ID,Dataset Name,Kind\nb72159fe-67d8-4ea7-8313-af2bf9210799,user1,julietezekwe1,test_dataset1,DATASET\nb72159fe-67d8-4ea7-8313-af2bf9210799,user2,julietezekwe1,test_dataset1,DATASET\nb72159fe-67d8-4ea7-8313-af2bf92107100,user1,julietezekwe1,test_dataset1,DATASET\nb72159fe-67d8-4ea7-8313-af2bf92107101,user2,julietezekwe2,test_dataset2,DATASET\nb72159fe-67d8-4ea7-8313-af2bf92107102,julietezekwe2,test_dataset2,user2,DATASET\n"
+        == "Subscribed At,User ID,Username,Dataset ID,Dataset Name,Kind\nb72159fe-67d8-4ea7-8313-af2bf9210799,user1,julietezekwe1,alice@example.com,test_dataset1,DATASET\nb72159fe-67d8-4ea7-8313-af2bf92107100,user1,julietezekwe1,alice@example.com,test_dataset1,DATASET\nb72159fe-67d8-4ea7-8313-af2bf92107101,user2,julietezekwe2,alice@example.com,test_dataset2,DATASET\nb72159fe-67d8-4ea7-8313-af2bf92107102,user2,julietezekwe2,alice@example.com,test_dataset2,DATASET\n"
     )

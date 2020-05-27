@@ -8,7 +8,15 @@ def test_get_dataset_subscription_200_subscription_exists(client, db, subscripti
     db.session.commit()
     dataset_id = subscription.dataset_id
     user_id = subscription.user_id
-    data = json.dumps({"user_id": user_id, "dataset_id": dataset_id, "kind": "DATASET"})
+    data = json.dumps(
+        {
+            "user_id": user_id,
+            "dataset_id": dataset_id,
+            "kind": "DATASET",
+            "user_name": "julietezekwe",
+            "email": "alice@example.com",
+        }
+    )
     response = client.post(f"/api/v1/subscription_status", data=data)
     assert response.status_code == 200
     data = response.get_json()
@@ -22,7 +30,14 @@ def test_get_new_datasets_subscription_200_subscription_exists(
     db.session.add(new_dataset_subscription)
     db.session.commit()
     user_id = new_dataset_subscription.user_id
-    data = json.dumps({"user_id": user_id, "kind": "NEW_DATASETS"})
+    data = json.dumps(
+        {
+            "user_id": user_id,
+            "kind": "NEW_DATASETS",
+            "user_name": "julietezekwe",
+            "email": "alice@example.com",
+        }
+    )
     response = client.post(f"/api/v1/subscription_status", data=data)
     assert response.status_code == 200
     data = response.get_json()
@@ -35,7 +50,15 @@ def test_get_dataset_subscription_404_subscription_doesnt_exist(
     # Return 404 NOT FOUND when subscription does not exist
     dataset_id = subscription.dataset_id
     user_id = subscription.user_id
-    data = json.dumps({"user_id": user_id, "dataset_id": dataset_id, "kind": "DATASET"})
+    data = json.dumps(
+        {
+            "user_id": user_id,
+            "dataset_id": dataset_id,
+            "kind": "DATASET",
+            "user_name": "julietezekwe",
+            "email": "alice@example.com",
+        }
+    )
     response = client.post(f"/api/v1/subscription_status", data=data)
     assert response.status_code == 404
 
@@ -45,7 +68,14 @@ def test_get_new_dataset_subscription_404_subscription_doesnt_exist(
 ):
     # Return 404 NOT FOUND when subscription does not exist
     user_id = new_dataset_subscription.user_id
-    data = json.dumps({"user_id": user_id, "kind": "NEW_DATASETS"})
+    data = json.dumps(
+        {
+            "user_id": user_id,
+            "kind": "NEW_DATASETS",
+            "user_name": "julietezekwe",
+            "email": "alice@example.com",
+        }
+    )
     response = client.post(f"/api/v1/subscription_status", data=data)
     assert response.status_code == 404
 
@@ -55,7 +85,13 @@ def test_post_subscription_201_new(client, db, subscription):
     dataset_id = subscription.dataset_id
     user_id = subscription.user_id
     data = json.dumps(
-        {"user_id": subscription.user_id, "dataset_id": dataset_id, "kind": "DATASET"}
+        {
+            "user_id": subscription.user_id,
+            "dataset_id": dataset_id,
+            "kind": "DATASET",
+            "username": "julietezekwe",
+            "email": "alice@example.com",
+        }
     )
     response = client.post(f"/api/v1/subscription", data=data)
     assert response.status_code == 201
@@ -76,7 +112,13 @@ def test_post_subscription_422_dataset_is_nonsubscribable(client, db, subscripti
     db.session.add(NonsubscribableDataset(dataset_id=dataset_id))
     db.session.commit()
     data = json.dumps(
-        {"user_id": subscription.user_id, "dataset_id": dataset_id, "kind": "DATASET"}
+        {
+            "user_id": subscription.user_id,
+            "dataset_id": dataset_id,
+            "kind": "DATASET",
+            "username": "julietezekwe",
+            "email": "alice@example.com",
+        }
     )
     response = client.post(f"/api/v1/subscription", data=data)
     data = response.get_json()
@@ -91,7 +133,13 @@ def test_post_subscription_already_subscribed(client, db, subscription):
     user_id = subscription.user_id
     dataset_id = subscription.dataset_id
     data = json.dumps(
-        {"user_id": subscription.user_id, "dataset_id": dataset_id, "kind": "DATASET"}
+        {
+            "user_id": subscription.user_id,
+            "dataset_id": dataset_id,
+            "kind": "DATASET",
+            "username": "julietezekwe",
+            "email": "alice@example.com",
+        }
     )
     response = client.post(f"/api/v1/subscription", data=data)
     data = response.get_json()
@@ -106,7 +154,14 @@ def test_post_new_dataset_subscription_already_subscribed(
     db.session.add(new_dataset_subscription)
     db.session.commit()
     user_id = new_dataset_subscription.user_id
-    data = json.dumps({"user_id": user_id, "kind": "NEW_DATASETS"})
+    data = json.dumps(
+        {
+            "user_id": new_dataset_subscription.user_id,
+            "kind": "NEW_DATASETS",
+            "username": "julietezekwe",
+            "email": "alice@example.com",
+        }
+    )
     response = client.post(f"/api/v1/subscription", data=data)
     data = response.get_json()
     assert response.status_code == 422
@@ -120,7 +175,13 @@ def test_delete_unsubscribe(client, db, subscription):
     user_id = subscription.user_id
     dataset_id = subscription.dataset_id
     data = json.dumps(
-        {"user_id": subscription.user_id, "dataset_id": dataset_id, "kind": "DATASET"}
+        {
+            "user_id": subscription.user_id,
+            "dataset_id": dataset_id,
+            "kind": "DATASET",
+            "user_name": "julietezekwe",
+            "email": "alice@example.com",
+        }
     )
     response = client.delete(f"/api/v1/subscription", data=data)
     assert response.status_code == 204
@@ -153,7 +214,14 @@ def test_delete_new_dataset_unsubscribe(client, db, new_dataset_subscription):
     db.session.add(new_dataset_subscription)
     db.session.commit()
     user_id = new_dataset_subscription.user_id
-    data = json.dumps({"user_id": user_id, "kind": "NEW_DATASETS"})
+    data = json.dumps(
+        {
+            "user_id": user_id,
+            "kind": "NEW_DATASETS",
+            "user_name": "julietezekwe",
+            "email": "alice@example.com",
+        }
+    )
     response = client.delete(f"/api/v1/subscription", data=data)
     assert response.status_code == 204
 
@@ -163,7 +231,13 @@ def test_delete_unsubscribe_doesnt_exist(client, db, subscription):
     user_id = subscription.user_id
     dataset_id = subscription.dataset_id
     data = json.dumps(
-        {"user_id": subscription.user_id, "dataset_id": dataset_id, "kind": "DATASET"}
+        {
+            "user_id": subscription.user_id,
+            "dataset_id": dataset_id,
+            "kind": "DATASET",
+            "user_name": "julietezekwe",
+            "email": "alice@example.com",
+        }
     )
     response = client.delete(f"/api/v1/subscription", data=data)
     assert response.status_code == 422
@@ -174,6 +248,23 @@ def test_delete_unsubscribe_new_dataset_doesnt_exist(
 ):
     # Return 422 UNPROCESSABLE ENTITY when delete subscription that doesn't exist.
     user_id = new_dataset_subscription.user_id
-    data = json.dumps({"user_id": user_id, "kind": "NEW_DATASETS"})
+    data = json.dumps(
+        {
+            "user_id": user_id,
+            "kind": "NEW_DATASETS",
+            "user_name": "julietezekwe",
+            "email": "alice@example.com",
+        }
+    )
+    response = client.delete(f"/api/v1/subscription", data=data)
+    assert response.status_code == 422
+
+
+def test_subsfription_without_email_or_username(client, db, new_dataset_subscription):
+    # Return 422 UNPROCESSABLE ENTITY when delete subscription that doesn't exist.
+    user_id = new_dataset_subscription.user_id
+    data = json.dumps(
+        {"user_id": user_id, "kind": "NEW_DATASETS", "user_name": "julietezekwe",}
+    )
     response = client.delete(f"/api/v1/subscription", data=data)
     assert response.status_code == 422
