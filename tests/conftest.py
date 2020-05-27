@@ -169,5 +169,4 @@ def ckan_meta_fixture(mocker):
         mock.return_value = response
         return mock
 
-    return ckan_metadata 
-    
+    return ckan_metadata
