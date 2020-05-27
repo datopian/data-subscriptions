@@ -8,11 +8,13 @@ from data_subscriptions.notifications.not_subscribable_notification_dispatcher i
 
 
 def test_send_notification_on_deleted_subscription_by_dataset(
-    mocker, ckan_meta_fixture
+    mocker, db, subscription, ckan_meta_fixture
 ):
-    template_data = NotSubscribableNotifiationDispatcher(
-        "b72159fe-67d8-4ea7-8313-af2bf9210799", "user1"
-    )
+    db.session.add(subscription)
+    db.session.commit()
+    dataset_id = subscription.dataset_id
+    user_id = subscription.user_id
+
     mocker.patch(
         "data_subscriptions.notifications.not_subscribable_notification_dispatcher.FRONTEND_SITE_URL",
         new="http://localhost/",
@@ -23,9 +25,15 @@ def test_send_notification_on_deleted_subscription_by_dataset(
         new=ckan_meta_fixture,
     )
 
+    template_data = NotSubscribableNotifiationDispatcher(dataset_id, user_id)
     template_data.template_prepare()
+
     assert template_data._template_data == {
-        "user": {"id": "user1", "email": "user1@gmail.com", "name": "nouser"},
+        "user": {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "email": "alice@example.com",
+            "name": "julietezekwe",
+        },
         "non_subs_package": {
             "title": "random-dataset-title",
             "url": "http://localhost/org-1/dataset-1-name",

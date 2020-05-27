@@ -24,9 +24,9 @@ class Dataset(Resource):
     def delete(self, dataset_id):
         datasets = Model.query.filter_by(dataset_id=dataset_id, kind="DATASET").all()
         if len(datasets) > 0:
-            Model.query.filter_by(dataset_id=dataset_id, kind="DATASET").delete()
             for item in datasets:
                 NotSubscribableNotifiationDispatcher(dataset_id, item.user_id)()
+            Model.query.filter_by(dataset_id=dataset_id, kind="DATASET").delete()
             db.session.commit()
         else:
             return None, 422

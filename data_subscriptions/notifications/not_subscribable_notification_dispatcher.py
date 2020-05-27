@@ -3,6 +3,7 @@ import os
 from operator import itemgetter
 from urllib.parse import urljoin
 
+from data_subscriptions.models import Subscription as Model
 from data_subscriptions.notifications.ckan_metadata import CKANMetadata
 from data_subscriptions.notifications.email_dispatcher import EmailDispatcher
 from data_subscriptions.notifications.email_template import EmailTemplateData
@@ -32,7 +33,7 @@ class NotSubscribableNotifiationDispatcher:
         user = {
             "id": self.user_id,
             "email": self.user["email"],
-            "name": self.user["display_name"],
+            "name": self.user["user_name"],
         }
 
         pkg_url = urljoin(FRONTEND_SITE_URL, self.dataset["organization"]["name"])
@@ -50,7 +51,7 @@ class NotSubscribableNotifiationDispatcher:
     @property
     def dataset(self):
         if not self._dataset:
-            result = CKANMetadata("package_show", self.dataset_id)()
+            result = CKANMetadata("package_show", [self.dataset_id])()
             if self.dataset_id in result:
                 self._dataset = result[self.dataset_id]
         return self._dataset
@@ -58,7 +59,10 @@ class NotSubscribableNotifiationDispatcher:
     @property
     def user(self):
         if not self._user:
-            result = CKANMetadata("user_show", [self.user_id])()
-            if self.user_id in result:
-                self._user = result[self.user_id]
+            user_detail = Model.query.filter_by(user_id=self.user_id).first()
+            self._user = {
+                "user_id": self.user_id,
+                "user_name": user_detail.user_name,
+                "email": user_detail.email,
+            }
         return self._user

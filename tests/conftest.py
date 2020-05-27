@@ -113,6 +113,7 @@ def all_subscription_list():
             "dataset_id": "b72159fe-67d8-4ea7-8313-af2bf9210799",
             "user_id": "user2",
             "user_name": "julietezekwe1",
+            "email": "alice@example.com",
             "dataset_name": "test_dataset1",
             "kind": "DATASET",
         },
@@ -158,21 +159,15 @@ def ckan_meta_fixture(mocker):
         mock = mocker.MagicMock(name="ckan_metadata")
         if action == "package_show":
             response = {
-                "b72159fe-67d8-4ea7-8313-af2bf9210799": {
+                "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx": {
                     "title": "random-dataset-title",
                     "name": "dataset-1-name",
-                    "id": "b72159fe-67d8-4ea7-8313-af2bf9210799",
+                    "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
                     "organization": {"name": "org-1"},
                 }
             }
-
-        elif action == "user_show":
-            response = {
-                "user1": {"email": "user1@gmail.com", "display_name": "nouser"},
-                "user2": {"email": "user2@gmail.com", "display_name": "nouser"},
-            }
-
         mock.return_value = response
         return mock
 
-    return ckan_metadata
+    return ckan_metadata 
+    
