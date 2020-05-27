@@ -1,4 +1,5 @@
 from flask_restful import Resource, request
+from flask import jsonify
 
 from data_subscriptions.extensions import db
 
@@ -78,7 +79,7 @@ class SubscriptionStatus(Resource):
             }
         else:
             subscription = Model.query.filter_by(
-                kind=self.NEW_DATASETS, user_id=user_id
+                kind=self.NEW_DATASETS, user_id=user_id,
             ).first_or_404()
             response = {
                 "user_id": subscription.user_id,
@@ -97,16 +98,24 @@ class Subscription(Resource):
     def post(self):
         response = {}
         data = request.get_json(force=True)
-        user_id = data["user_id"]
-        user_name = get_ckan_metadata(user_id, "user_show", "display_name")
-        kind = data["kind"]
         status = 422
+        try:
+            email = data["email"]
+            user_id = data["user_id"]
+            user_name = data["username"]
+            kind = data["kind"]
+        except Exception as error:
+            response = jsonify({"error": "invalid parameters"})
+            response.status_code = status
+            return response
+
         if kind == self.DATASET and can_subscribe(user_id, data["dataset_id"]):
             dataset_id = data["dataset_id"]
             dataset_name = get_ckan_metadata(dataset_id, "package_show", "name")
             db.session.add(
                 Model(
                     user_id=user_id,
+                    email=email,
                     kind=self.DATASET,
                     dataset_id=dataset_id,
                     dataset_name=dataset_name,
@@ -127,7 +136,12 @@ class Subscription(Resource):
             )
         elif kind == self.NEW_DATASETS and can_subscribe(user_id):
             db.session.add(
-                Model(user_id=user_id, kind=self.NEW_DATASETS, user_name=user_name)
+                Model(
+                    user_id=user_id,
+                    user_name=user_name,
+                    email=email,
+                    kind=self.NEW_DATASETS,
+                )
             )
             db.session.commit()
             status = 201
@@ -143,7 +157,6 @@ class Subscription(Resource):
         return response
 
     def delete(self):
-
         data = request.get_json(force=True)
         user_id = data["user_id"]
         kind = data["kind"]

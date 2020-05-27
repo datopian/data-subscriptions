@@ -11,6 +11,7 @@ def test_get_subscribed_datasets_200(client, db, subscription_list):
                 user_id=sub["user_id"],
                 user_name="julietezekwe1",
                 kind="DATASET",
+                email="alice@example.com",
             )
         )
         db.session.commit()
@@ -30,6 +31,7 @@ def test_get_subscribed_datasets_nonexits_user_404(client, db, subscription_list
                 user_id=sub["user_id"],
                 user_name="julietezekwe1",
                 kind="DATASET",
+                email="alice@example.com",
             )
         )
         db.session.commit()

@@ -4,6 +4,8 @@ from operator import itemgetter
 
 from ckanapi import RemoteCKAN
 
+from data_subscriptions.models import Subscription as Model
+
 from data_subscriptions.notifications.ckan_metadata import CKANMetadata
 from data_subscriptions.notifications.email_dispatcher import EmailDispatcher
 from data_subscriptions.notifications.email_template import EmailTemplateData
@@ -36,7 +38,7 @@ class UserNotificationDispatcher:
             user = {
                 "id": self.user_id,
                 "email": self.user["email"],
-                "name": self.user["display_name"],
+                "name": self.user["user_name"],
             }
 
             email_template = EmailTemplateData(user, self.datasets, self.activities)
@@ -60,7 +62,10 @@ class UserNotificationDispatcher:
     @property
     def user(self):
         if not self._user:
-            result = CKANMetadata("user_show", [self.user_id])()
-            if self.user_id in result:
-                self._user = result[self.user_id]
+            user_detail = Model.query.filter_by(user_id=self.user_id).first()
+            self._user = {
+                "user_id": self.user_id,
+                "user_name": user_detail.user_name,
+                "email": user_detail.email,
+            }
         return self._user
