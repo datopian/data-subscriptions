@@ -187,6 +187,28 @@ def test_delete_unsubscribe(client, db, subscription):
     assert response.status_code == 204
 
 
+def test_delete_subscription_by_dataset(
+    mocker, client, db, all_subscription, all_subscription_list
+):
+    # Return 204 NO CONTENT when subscription deleted by dataset id.
+    dispatcher = mocker.patch(
+        "data_subscriptions.api.resources.subscribed_dataset.NotSubscribableNotifiationDispatcher"
+    )
+
+    dataset_id = all_subscription[0]["dataset_id"]
+    response = client.delete(f"/api/v1/dataset/{dataset_id}")
+    assert response.status_code == 204
+
+
+def test_delete_subscription_by_non_exist_dataset(
+    mocker, client, db, all_subscription, all_subscription_list
+):
+    # Return 422 UNPROCESSABLE ENTITY when subscription delete by non exist dataset id.
+    dataset_id = "nonexist-dataset-id"
+    response = client.delete(f"/api/v1/dataset/{dataset_id}")
+    assert response.status_code == 422
+
+
 def test_delete_new_dataset_unsubscribe(client, db, new_dataset_subscription):
     # Return 204 NO CONTENT when subscription deleted.
     db.session.add(new_dataset_subscription)

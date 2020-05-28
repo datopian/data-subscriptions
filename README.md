@@ -68,6 +68,14 @@ Available methods:
 
 - `GET` - Get list of subscriptions for a given authorized user.
 
+### Dataset
+
+**Endpoint: `/dataset/<string:dataset_id>`
+
+Available methods:
+
+- `DELETE` - Delete the subscriptions for given dataset.
+
 ### Subscription Report
 
 **Endpoint: `/stat`**

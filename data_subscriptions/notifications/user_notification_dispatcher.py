@@ -1,6 +1,7 @@
 import logging
 import os
 from operator import itemgetter
+from urllib.parse import urljoin
 
 from ckanapi import RemoteCKAN
 
@@ -9,6 +10,8 @@ from data_subscriptions.models import Subscription as Model
 from data_subscriptions.notifications.ckan_metadata import CKANMetadata
 from data_subscriptions.notifications.email_dispatcher import EmailDispatcher
 from data_subscriptions.notifications.email_template import EmailTemplateData
+
+FRONTEND_SITE_URL = os.getenv("FRONTEND_SITE_URL")
 
 
 class UserNotificationDispatcher:
