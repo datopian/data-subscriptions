@@ -1,5 +1,5 @@
 from flask_restful import Resource, request
-from flask import jsonify
+from http import HTTPStatus
 
 from data_subscriptions.extensions import db
 
@@ -57,6 +57,11 @@ def remove_new_dataset_subscription(user_id):
         return None, 422
 
 
+def is_missing_post_params(data, keys):
+
+    return not all(k in data for k in keys)
+
+
 class SubscriptionStatus(Resource):
     def __init__(self):
         self.DATASET = "DATASET"
@@ -64,6 +69,9 @@ class SubscriptionStatus(Resource):
 
     def post(self):
         data = request.get_json(force=True)
+        keys = ["user_id", "kind"]
+        if is_missing_post_params(data, keys):
+            return {"error": "invalid parameters"}, HTTPStatus.UNPROCESSABLE_ENTITY
         user_id = data["user_id"]
         kind = data["kind"]
         response = {}
@@ -99,15 +107,13 @@ class Subscription(Resource):
         response = {}
         data = request.get_json(force=True)
         status = 422
-        try:
-            email = data["email"]
-            user_id = data["user_id"]
-            user_name = data["username"]
-            kind = data["kind"]
-        except Exception as error:
-            response = jsonify({"error": "invalid parameters"})
-            response.status_code = status
-            return response
+        keys = ["email", "user_id", "username", "kind"]
+        if is_missing_post_params(data, keys):
+            return {"error": "invalid parameters"}, HTTPStatus.UNPROCESSABLE_ENTITY
+        email = data["email"]
+        user_id = data["user_id"]
+        user_name = data["username"]
+        kind = data["kind"]
 
         if kind == self.DATASET and can_subscribe(user_id, data["dataset_id"]):
             dataset_id = data["dataset_id"]
@@ -158,6 +164,9 @@ class Subscription(Resource):
 
     def delete(self):
         data = request.get_json(force=True)
+        keys = ["user_id", "kind"]
+        if is_missing_post_params(data, keys):
+            return {"error": "invalid parameters"}, HTTPStatus.UNPROCESSABLE_ENTITY
         user_id = data["user_id"]
         kind = data["kind"]
         response = {}

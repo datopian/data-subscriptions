@@ -23,6 +23,19 @@ def test_get_dataset_subscription_200_subscription_exists(client, db, subscripti
     assert data == {"dataset_id": dataset_id, "user_id": user_id, "kind": "DATASET"}
 
 
+def test_get_dataset_subscription_422_incomplete_parameters(client, db, subscription):
+    # Return 422 unprocessable entity when the required parameters are not given
+    db.session.add(subscription)
+    db.session.commit()
+    dataset_id = subscription.dataset_id
+    user_id = subscription.user_id
+    data = json.dumps({"user_id": user_id, "dataset_id": dataset_id})
+    response = client.post(f"/api/v1/subscription_status", data=data)
+    assert response.status_code == 422
+    data = response.get_json()
+    assert data == {"error": "invalid parameters"}
+
+
 def test_get_new_datasets_subscription_200_subscription_exists(
     client, db, new_dataset_subscription
 ):
@@ -185,6 +198,19 @@ def test_delete_unsubscribe(client, db, subscription):
     )
     response = client.delete(f"/api/v1/subscription", data=data)
     assert response.status_code == 204
+
+
+def test_delete_unsubscribe_422_incomplete_parameters(client, db, subscription):
+    # Return 422 unprocessable entity when the required parameters are not given
+    db.session.add(subscription)
+    db.session.commit()
+    user_id = subscription.user_id
+    dataset_id = subscription.dataset_id
+    data = json.dumps({"user_id": subscription.user_id, "dataset_id": dataset_id,})
+    response = client.delete(f"/api/v1/subscription", data=data)
+    assert response.status_code == 422
+    data = response.get_json()
+    assert data == {"error": "invalid parameters"}
 
 
 def test_delete_subscription_by_dataset(

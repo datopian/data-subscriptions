@@ -12,10 +12,6 @@ def subject(mocker):
         mock = mocker.MagicMock(name="ckan_metadata")
         if action == "package_show":
             response = {"42": {"object_id": "42"}}
-        elif action == "user_show":
-            response = {
-                "user-id-1": {"email": "alice@example.com", "user_name": "Alice"}
-            }
         mock.return_value = response
         return mock
 
