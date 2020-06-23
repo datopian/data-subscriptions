@@ -12,24 +12,18 @@ from data_subscriptions.notifications.batch_dispatcher import BatchDispatcher
 from data_subscriptions.worker.dataset_activity_list import DatasetActivityList
 
 
-BACKEND_URL = os.getenv("REDIS_URL", default=os.getenv("REDISTOGO_URL"))
-if not BACKEND_URL:
+BROKER_URL = os.getenv("REDIS_URL", default=os.getenv("REDISTOGO_URL"))
+if not BROKER_URL:
     password = os.getenv("redis-password")
     host = os.getenv("REDIS_HOST")
-    BACKEND_URL = f"redis://default:{password}@{host}:6379"
-
-BROKER_URL = os.getenv("RABBITMQ_URL", default=os.getenv("CLOUDAMQP_URL"))
-if not BROKER_URL:
-    password = os.getenv("rabbitmq-password")
-    host = os.getenv("RABBITMQ_HOST")
-    BROKER_URL = f"pyamqp://user:{password}@{host}:5672"
+    BROKER_URL = f"redis://default:{password}@{host}:6379/0"
 
 PULL_FREQUENCY = int(os.getenv("TIME_IN_SECONDS_BETWEEN_ACTIVITY_PULLS"))
 NOTIFICATION_FREQUENCY = int(
     os.getenv("TIME_IN_SECONDS_BETWEEN_NOTIFICATION_DELIVERIES")
 )
 
-app = Celery("tasks", backend=BACKEND_URL, broker=BROKER_URL)
+app = Celery("tasks", broker=BROKER_URL)
 
 
 class Database:
