@@ -14,11 +14,15 @@ from data_subscriptions.worker.dataset_activity_list import DatasetActivityList
 
 BACKEND_URL = os.getenv("REDIS_URL", default=os.getenv("REDISTOGO_URL"))
 if not BACKEND_URL:
-    BACKEND_URL = f"redis://default:{os.getenv('redis-password')}@national-grid-redis-headless:6379"
+    password = os.getenv("redis-password")
+    host = os.getenv("REDIS_HOST")
+    BACKEND_URL = f"redis://default:{password}@{host}:6379"
 
 BROKER_URL = os.getenv("RABBITMQ_URL", default=os.getenv("CLOUDAMQP_URL"))
 if not BROKER_URL:
-    BROKER_URL = f"pyamqp://user:{os.getenv('rabbitmq-password')}@national-grid-rabbitmq-headless:5672"
+    password = os.getenv("rabbitmq-password")
+    host = os.getenv("RABBITMQ_HOST")
+    BROKER_URL = f"pyamqp://user:{password}@{host}:5672"
 
 PULL_FREQUENCY = int(os.getenv("TIME_IN_SECONDS_BETWEEN_ACTIVITY_PULLS"))
 NOTIFICATION_FREQUENCY = int(
