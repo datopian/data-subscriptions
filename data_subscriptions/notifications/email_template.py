@@ -64,11 +64,11 @@ class DatasetActivity:
         messages_for_activity_type = {
             "new package": "A new dataset has been created.",
             "new resource": "A new file has been added.",
-            "changed resource": "The metadata for a file has been udpated.",
-            "changed package": "The metadata for the dataset has been udpated.",
+            "changed resource": "The metadata for a file has been updated.",
+            "changed package": "The metadata for the dataset has been updated.",
             "changed file": "An existing file has been updated.",
-            "deleted resource": "The dataset has been udpated.",
-            "deleted package": "The dataset has been udpated.",
+            "deleted resource": "The dataset has been updated.",
+            "deleted package": "The dataset has been updated.",
         }
 
         activity_type = activity["data"].get("body", {}).get("activity_type", False)
