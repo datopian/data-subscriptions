@@ -69,6 +69,7 @@ class DatasetActivity:
             "changed file": "An existing file has been updated.",
             "deleted resource": "The dataset has been updated.",
             "deleted package": "The dataset has been updated.",
+            "removed tag": "The tags have been changed.",
         }
 
         activity_type = activity["data"].get("body", {}).get("activity_type", False)
