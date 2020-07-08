@@ -78,8 +78,8 @@ class DatasetActivity:
 
         details = self.ckan_api.action.activity_detail_list(id=activity["id"])
 
-        if len(details) == 1:
-            detail = details[0]
+        if len(details) >= 1:
+            detail = details[-1]
             object_type = detail["object_type"]
             new_activity_type = "%s %s" % (detail["activity_type"], object_type.lower())
             activity["activity_type"] = new_activity_type
