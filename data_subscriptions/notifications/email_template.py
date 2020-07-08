@@ -22,12 +22,15 @@ class EmailTemplateData:
         self.activities = activities
 
     def template_data(self):
-        data = {"packages": []}
-        data.update({"user": self.user})
+        data = {"user": self.user, "packages": [], "new_package": []}
         for activities in self.activities_by_dataset():
             metadata = self.datasets[activities[0]["object_id"]]
-            dataset_item = DatasetActivity(metadata, activities)()
-            data["packages"].append(dataset_item)
+            if activities[0].get("activity_type", False) == "new package":
+                new_dataset_item = DatasetActivity(metadata, activities)()
+                data["new_package"].append(new_dataset_item)
+            else:
+                dataset_item = DatasetActivity(metadata, activities)()
+                data["packages"].append(dtaset_item)
         return data
 
     def activities_by_dataset(self):
