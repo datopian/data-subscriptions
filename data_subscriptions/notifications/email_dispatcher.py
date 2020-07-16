@@ -7,7 +7,10 @@ from sendgrid.helpers.mail import Mail
 API_KEY = os.getenv("SENDGRID_API_KEY")
 MAILER_FROM_EMAIL = os.getenv("MAILER_FROM_EMAIL")
 MAILER_FROM_NAME = os.getenv("MAILER_FROM_NAME")
-SENDGRID_TEMPLATE_ID = os.getenv("SENDGRID_TEMPLATE_ID")
+SENDGRID_TEMPLATE_ID_FOR_NEW_DATASET = os.getenv("SENDGRID_TEMPLATE_ID_FOR_NEW_DATASET")
+SENDGRID_TEMPLATE_ID_FOR_DATASET_UPDATE = os.getenv(
+    "SENDGRID_TEMPLATE_ID_FOR_DATASET_UPDATE"
+)
 
 
 class EmailDispatcher:
@@ -24,8 +27,12 @@ class EmailDispatcher:
             subject="A dataset you have subscribed to has been updated",
         )
 
-    def __call__(self, template_data):
-        self.message.template_id = SENDGRID_TEMPLATE_ID
+    def __call__(self, template_data, activity_type):
+        if activity_type == "new dataset":
+            self.message.template_id = SENDGRID_TEMPLATE_ID_FOR_NEW_DATASET
+        elif activity_type == "updated dataset":
+            self.message.template_id = SENDGRID_TEMPLATE_ID_FOR_DATASET_UPDATE
+
         self.message.dynamic_template_data = template_data
         try:
             self.response = self.client.send(self.message)

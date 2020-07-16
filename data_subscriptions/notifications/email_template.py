@@ -30,7 +30,7 @@ class EmailTemplateData:
                 data["new_package"].append(new_dataset_item)
             else:
                 dataset_item = DatasetActivity(metadata, activities)()
-                data["packages"].append(dtaset_item)
+                data["packages"].append(dataset_item)
         return data
 
     def activities_by_dataset(self):
