@@ -27,10 +27,10 @@ class EmailDispatcher:
             subject="A dataset you have subscribed to has been updated",
         )
 
-    def __call__(self, template_data, activity_type):
-        if activity_type == "new dataset":
+    def __call__(self, template_data, notification_type):
+        if notification_type == "new":
             self.message.template_id = SENDGRID_TEMPLATE_ID_FOR_NEW_DATASET
-        elif activity_type == "updated dataset":
+        elif notification_type == "update":
             self.message.template_id = SENDGRID_TEMPLATE_ID_FOR_DATASET_UPDATE
 
         self.message.dynamic_template_data = template_data
