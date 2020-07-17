@@ -11,7 +11,24 @@ def subject(mocker):
     def ckan_metadata(action, *args, **kwargs):
         mock = mocker.MagicMock(name="ckan_metadata")
         if action == "package_show":
-            response = {"42": {"object_id": "42"}}
+            response = {
+                "42": {
+                    "object_id": "42",
+                    "dataset_id": "42",
+                    "title": "random-dataset-title",
+                    "name": "dataset-1-name",
+                    "id": "42",
+                    "organization": {"name": "org-1"},
+                },
+                "43": {
+                    "object_id": "43",
+                    "dataset_id": "43",
+                    "title": "random-dataset-title",
+                    "name": "dataset-2-name",
+                    "id": "43",
+                    "organization": {"name": "org-2"},
+                },
+            }
         mock.return_value = response
         return mock
 
@@ -57,6 +74,107 @@ def test_call_without_user(mocker, subject, db, subscription_data):
     subject.send.assert_not_called()
 
 
+def test_prepare_tempate_new_dataset_notification(
+    mocker, subject, db, subscription_data
+):
+    db.session.add(subscription_data)
+    db.session.commit()
+
+    activities = [
+        {
+            "dataset_id": "42",
+            "activity": {
+                "object_id": "42",
+                "id": "",
+                "data": {"body": {}},
+                "activity_type": "new package",
+            },
+        }
+    ]
+
+    subject = UserNotificationDispatcher(
+        "user-id-1", activities, dt.datetime(2020, 1, 1)
+    )
+    subject.prepare()
+    dispatcher = mocker.patch(
+        "data_subscriptions.notifications.user_notification_dispatcher.EmailDispatcher"
+    )
+    subject.send()
+    assert len(subject.newDatasetMsgFilter(subject._template_data)) == 1
+    dispatcher.return_value.assert_called_once()
+
+
+def test_prepare_tempate_dataset_update_notification(
+    mocker, subject, db, subscription_data
+):
+    db.session.add(subscription_data)
+    db.session.commit()
+
+    activities = [
+        {
+            "dataset_id": "43",
+            "activity": {
+                "object_id": "43",
+                "id": "",
+                "data": {"body": {}},
+                "activity_type": "changed package",
+            },
+        }
+    ]
+
+    subject = UserNotificationDispatcher(
+        "user-id-1", activities, dt.datetime(2020, 1, 1)
+    )
+    subject.prepare()
+    dispatcher = mocker.patch(
+        "data_subscriptions.notifications.user_notification_dispatcher.EmailDispatcher"
+    )
+    subject.send()
+    print(subject._template_data)
+    assert len(subject.datasetUpdateMsgFilter(subject._template_data)) == 1
+    dispatcher.return_value.assert_called_once()
+
+
+def test_send_when_both_new_dataset_and_update_msg_on_activity_list(
+    mocker, subject, db, subscription_data
+):
+    db.session.add(subscription_data)
+    db.session.commit()
+
+    activities = [
+        {
+            "dataset_id": "42",
+            "activity": {
+                "object_id": "42",
+                "id": "",
+                "data": {"body": {}},
+                "activity_type": "new package",
+            },
+        },
+        {
+            "dataset_id": "43",
+            "activity": {
+                "object_id": "43",
+                "id": "",
+                "data": {"body": {}},
+                "activity_type": "changed package",
+            },
+        },
+    ]
+
+    subject = UserNotificationDispatcher(
+        "user-id-1", activities, dt.datetime(2020, 1, 1)
+    )
+    subject.prepare()
+    dispatcher = mocker.patch(
+        "data_subscriptions.notifications.user_notification_dispatcher.EmailDispatcher"
+    )
+    subject.send()
+    assert len(subject.datasetUpdateMsgFilter(subject._template_data)) == 1
+    assert len(subject.datasetUpdateMsgFilter(subject._template_data)) == 1
+    assert dispatcher.call_count == 2
+
+
 def test_prepare(mocker, subject, db, subscription_data):
     db.session.add(subscription_data)
     db.session.commit()
@@ -92,7 +210,7 @@ def test_send_with_activities(mocker, subject, db, subscription_data):
     mocker.patch.object(
         subject,
         "_template_data",
-        {"packages": [{"title": "dataset-1", "url": "", "activities": []}]},
+        {"packages": [{"title": "", "url": "", "activities": []}], "new_package": []},
     )
     subject.send()
-    dispatcher.return_value.assert_called_once_with(subject._template_data)
+    dispatcher.return_value.assert_called_once()
