@@ -58,15 +58,12 @@ class UserNotificationDispatcher:
 
             if len(newDatasetActivites) > 0:
                 email_dispatcher = EmailDispatcher(self.user["email"])
-                email_dispatcher(
-                    {"user": user, "package": newDatasetActivites}, "new"
-                )
+                email_dispatcher({"user": user, "package": newDatasetActivites}, "new")
 
             if len(datasetUpdateActivities) > 0:
                 email_dispatcher = EmailDispatcher(self.user["email"])
                 email_dispatcher(
-                    {"user": user, "package": datasetUpdateActivities},
-                    "update",
+                    {"user": user, "package": datasetUpdateActivities}, "update",
                 )
 
     def newDatasetMsgFilter(self, activitesList):
