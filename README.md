@@ -138,6 +138,46 @@ We do continuous deployment [to Heroku](https://gitlab.com/datopian/clients/data
 
 # Design
 
+## Job Stories
+
+### Dataset Update Notifications via Email or SMS
+
+When using the data in this data portal I want to be  notified (e.g. via email) when one of the key datasetsis updated  so that I know to integrate that updated data with my workflow
+ 
+* [=> by the below: have a user account => signup, login etc
+* I want to be able to see a list of all the subscribable datasets
+* I want to be choose the datasets i subscribe to (and unsubscribe from)
+  * Some datasets may not be subscribable to?? (see admin item)
+  * a visual element to “subscribe to this dataset“. This visual element will describe what it means to subscribe, and, provide an action for the user to subscribe herself.
+  * Only show subscribe option to logged in users (??)
+  * When a registered user visits a dataset page, she sees the option to subscribe to updates for this dataset
+  * Bulk unsubscribe
+* I want to be able to choose the medium of notification e.g. email or sms (webhook??)
+* What events trigger a notification? Any update event to the data (and metadata)
+  * TODO: clarify if metadata included
+* Frequency control?? E.g. once a day or every event? ANS: every event
+* What is the payload? E.g. just email or attachments e.g. CSV
+* Can unsubscribe via link in email or via UI
+* Confirm their email or text subscription via email b4 being subscribed (GDPR?)
+ 
+### Control what datasets are subscribable to
+
+As a sysadmin user, I want to be able to select (and deselect), from all the datasets on the portal, datasets that can be subscribed to, so that I can use this dataset level flag to build out email and text (sms) subscription services.
+ 
+### View Stats on Subscriptions
+
+When an Admin of a data portal I want to view stats on subscriptions so that I can manage this and report to other stakeholders
+
+* Filter by datasets
+* View data on specific users
+* Time they subscribed, username, and email
+ 
+### Create/Edit Email Template for Notifications 
+
+When configuring the subscription system I want to be able to create and modify email template so that I can brand and customize the email user's receive
+
+* Is this per dataset? No: it’s generic for all datasets
+
 ## Domain Model
 
 * **Subscription**: `tuple(account, dataset, {event-type-filter}, [frequency?], ...)`
@@ -221,7 +261,6 @@ sequenceDiagram
   * Could turn this into an event hub service (esp if we )
     * Could we use postgres listen/notify ...
     * Or we could even just do polling if time internal is not too short ...
-
 
 ### Render subscribe UI in frontend ...
 
