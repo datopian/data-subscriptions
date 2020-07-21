@@ -1,8 +1,33 @@
-# Data Subscriptions
+# Subscriptions and Notifications (for Datasets)
 
-_Service to monitor and notify users about changes in datasets._
+Data Subscriptions is a standalone microservice for CKAN that allows users to subscribe to notifications of dataset changes. Notifications are available in several forms: web, email, and  SMS (in development). Users can subscribe and unsubcribe to changes, configure the medium for notifications etc. It is feature complete and actively deployed in production.
 
-Data Subscriptions is a service meant to notify users when CKAN datasets change. For the end-users, it works like this:
+The core job story is:
+
+> When I am interested in a given dataset I want to get notifications (in a dashboard, via email etc) when that dataset is updated (or other changes happen) so that I can take action e.g. update my application, check if security issue etc
+
+## Features
+
+* Subscribe to notifications for datasets (+ (maybe) other types of events e.g. someone added or removed organization)
+  * From WUI (and email for unwatch)
+* Configure medium of notification e.g. email, mobile, web
+* View notifications stream arising from my watching
+* Review my watched list (and modify it)
+* Admin can configure which datasets are watchable
+* Admin can view stats about watching
+
+### Flows
+
+* Watch (unwatch) flow
+  * From WUI
+  * Unwatch from email
+  * Optional: initiate watch flow without being registered / logged in yet
+* Configure settings flow
+* Admin related flows
+
+## How it works
+
+For the end-users, it works like this:
 
 [![](https://mermaid.ink/img/eyJjb2RlIjoiZ3JhcGggTFJcbiAgY3VyYXRvcigoRGF0YSBDdXJhdG9yKSlcbiAgdXNlcigoVXNlcikpXG5cbiAgc3ViZ3JhcGggY2thbltcIkNLQU4gQ2xhc3NpY1wiXVxuICAgIGRhdGFzZXRbXCJEYXRhc2V0L1Jlc291cmNlXCJdXG4gIGVuZFxuXG5cbiAgY3VyYXRvciAtLSB1cGRhdGVzIG1ldGFkYXRhIC0tPiBkYXRhc2V0XG4gIGN1cmF0b3IgLS0gdXBkYXRlcyBkYXRhIC0tPiBkYXRhc2V0XG4gIHVzZXIgLS0gc3Vic2NyaWJlcyAtLT4gZGF0YXNldFxuIiwibWVybWFpZCI6eyJ0aGVtZSI6ImRlZmF1bHQifSwidXBkYXRlRWRpdG9yIjpmYWxzZX0)](https://mermaid-js.github.io/mermaid-live-editor/#/edit/eyJjb2RlIjoiZ3JhcGggTFJcbiAgY3VyYXRvcigoRGF0YSBDdXJhdG9yKSlcbiAgdXNlcigoVXNlcikpXG5cbiAgc3ViZ3JhcGggY2thbltcIkNLQU4gQ2xhc3NpY1wiXVxuICAgIGRhdGFzZXRbXCJEYXRhc2V0L1Jlc291cmNlXCJdXG4gIGVuZFxuXG5cbiAgY3VyYXRvciAtLSB1cGRhdGVzIG1ldGFkYXRhIC0tPiBkYXRhc2V0XG4gIGN1cmF0b3IgLS0gdXBkYXRlcyBkYXRhIC0tPiBkYXRhc2V0XG4gIHVzZXIgLS0gc3Vic2NyaWJlcyAtLT4gZGF0YXNldFxuIiwibWVybWFpZCI6eyJ0aGVtZSI6ImRlZmF1bHQifSwidXBkYXRlRWRpdG9yIjpmYWxzZX0)
 
@@ -230,3 +255,37 @@ sequenceDiagram
 ### Admin views stats ...
 
 ### Admin sets subscribable status
+
+
+## Appendix: How GitHub does it
+
+NB: github has got a lot more complex over the years so user flow isn't quite as smooth as it once was.
+
+```mermaid
+graph TD
+
+root[Profile Dropdown in navbar]
+settings[Settings]
+notifications[Notifications Subsection - config e.g. what medium]
+watching[github.com/watching<br/>list of what you are watching]
+dashboard[User dashboard<br/>prime info is notifications]
+
+root --> settings
+settings --> notifications
+notifications --> watching
+root --> dashboard
+```
+
+### Watch / Unwatch Repo
+
+![](https://i.imgur.com/nTi0ob0.gif)
+
+
+### Notifications
+
+![](https://i.imgur.com/MDTxNos.png)
+
+
+### Settings
+
+![](https://i.imgur.com/wpn4g96.png)
