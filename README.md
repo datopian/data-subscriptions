@@ -109,3 +109,124 @@ $ docker-compose up
 ## Deployment
 
 We do continuous deployment [to Heroku](https://gitlab.com/datopian/clients/data-subscriptions/-/blob/master/heroku.yml) via [GitLab CI](https://gitlab.com/datopian/clients/data-subscriptions/-/blob/master/.gitlab-ci.yml).
+
+
+# Design
+
+## Domain Model
+
+* **Subscription**: `tuple(account, dataset, {event-type-filter}, [frequency?], ...)`
+  * `tuple(account, filter-function-on-activity-stream)`
+* **Subscription Settings**: `tuple(account, media[web|email|sms|newsletter], other options)`
+* **Account (User)**: a user for a subscription
+  
+Alternatively could seem them as any filter operation on an overall activity stream  => leads us into event bus type territory … 
+
+In the most general sense, A "subscription" (for notifications) is a function f:
+
+```
+f(event stream) = user's event stream
+```
+
+And notifications are:
+
+```
+g(user's event stream, settings) => emails/sms etc
+```
+
+## Components
+
+* SubscriptionDB + API
+* NotifierService e.g. bulk email/sms
+* UI
+* Notification
+* RulesDB (?) (for generating notifications)
+ 
+Required but probably external
+
+* Accounts (user identifier + email + sms)
+
+Notes
+
+* I (account) subscribe to dataset (dataset) X
+* Curator updates dset (dataset) X
+* I get a notification (event)
+* Curator updates dataset (dataset) Y
+* I don't get a notification (event)
+* Curator updates dataset (dataset) X
+* I get a notification (event)
+
+## Sequence Diagrams
+
+### Subscribe (/ Unsubscribe / Change subscription) button click
+
+* TODO: add to sequence checking restrictions on which datasets you can subscribe to
+
+```mermaid
+sequenceDiagram
+
+  Frontend->>API: POST /subscription?dataset=123&account=qwe&event-type=xxx
+  API->>Authz: check authorization for {user, dataset}
+  Authz-->>API: OK
+  API->>DB: UPSERT INTO subscriptions {timestamp, account, dataset, event-type}
+  API-->>Frontend: HTTP 201 CREATED
+  Frontend->>Frontend: Update UI
+```
+
+### Event happens ...
+
+* curator edits a datasets and event stream has a new event (EventStream = activity stream table in CKAN Classic))
+* MetaStore->>EventStream: `INSERT INTO (dataset, eventType, message)`
+* Prior to event happening SubsNotificationService has subscribed itself to the EventStream
+
+```mermaid
+sequenceDiagram
+
+  EventStream->>Notifier: POST /event
+  loop for xmedium in [email, sms]
+    Notifier->>SubsDB: SELECT FROM subscribers JOIN subs_settings WHERE dataset = ? AND eventType = ? AND medium = xmedium
+    SubsDB-->>Notifier: returns(account[])
+    Notifier-->>Settings: get Email/SMS Template
+    Notifier->>Emailer/SMS: send(account.email/mobile[], msg)
+  end
+```
+
+* https://github.com/ckan/ckan/blob/master/ckan/model/activity.py
+  * There is a big table of all the activities ...
+  * Could turn this into an event hub service (esp if we )
+    * Could we use postgres listen/notify ...
+    * Or we could even just do polling if time internal is not too short ...
+
+
+### Render subscribe UI in frontend ...
+
+* Frontend needs to check before rendering if this is a dataset that allows subscriptions
+* Frontend needs to check if user is subscribed
+* TODO.QU: where do we save whether a dataset is subscribable
+  * ANS: in a separate table: `nonsubscribable_datasets`
+
+```mermaid
+sequenceDiagram
+
+  Frontend->>Frontend: is user logged in?
+  Frontend->>API: GET /is_subscribable?dataset=xxx?
+  API->>DB: SELECT NOT xxx FROM nonsubscribable_datasets
+  API-->>Frontend: yes/no [if no, done]
+  Frontend->>API: GET /subscription?dataset=123&account=qwe
+  API->>Authz: check authorization for {user, dataset}
+  Authz-->>API: OK
+  API->>DB: SELECT subscriptions {timestamp, account, dataset, event-type}
+  DB-->>API: return subscriptions[]
+  API-->>Frontend: return event-type or null
+  Frontend->>Frontend: showSubscribeUI(current-event-type | default-event-type)
+```
+
+### User views (and changes) notification settings
+
+### User views all existing (and potential?) subscriptions (and changes)
+
+* TODO.QU: does include potential - that's weird in my view (how does it work with 200 datasets or 200k). Just let people subscribe via the dataset page
+
+### Admin views stats ...
+
+### Admin sets subscribable status
