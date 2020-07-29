@@ -52,8 +52,25 @@ class UserNotificationDispatcher:
 
     def send(self):
         if self.has_data_for_template():
-            email_dispatcher = EmailDispatcher(self.user["email"])
-            email_dispatcher(self._template_data)
+            user = self._template_data.get("user", {})
+            newDatasetActivites = self.newDatasetMsgFilter(self._template_data)
+            datasetUpdateActivities = self.datasetUpdateMsgFilter(self._template_data)
+
+            if len(newDatasetActivites) > 0:
+                email_dispatcher = EmailDispatcher(self.user["email"])
+                email_dispatcher({"user": user, "package": newDatasetActivites}, "new")
+
+            if len(datasetUpdateActivities) > 0:
+                email_dispatcher = EmailDispatcher(self.user["email"])
+                email_dispatcher(
+                    {"user": user, "package": datasetUpdateActivities}, "update",
+                )
+
+    def newDatasetMsgFilter(self, activitesList):
+        return activitesList.get("new_package", [])
+
+    def datasetUpdateMsgFilter(self, activitesList):
+        return activitesList.get("packages", [])
 
     @property
     def datasets(self):

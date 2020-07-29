@@ -15,5 +15,5 @@ def test_call(mocker, api_response):
     APIClient.return_value.send.return_value = api_response
     subject = email_dispatcher.EmailDispatcher("alice@example.com")
 
-    subject("<html><strong>It works!<strong></html>")
+    subject({"message": "it works!"}, "000")
     APIClient.return_value.send.assert_called_once()
