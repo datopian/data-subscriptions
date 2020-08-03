@@ -46,7 +46,7 @@ class NotSubscribableNotifiationDispatcher:
 
     def send(self):
         email_dispatcher = EmailDispatcher(self.user["email"])
-        email_dispatcher(self._template_data)
+        email_dispatcher(self._template_data, "update")
 
     @property
     def dataset(self):
