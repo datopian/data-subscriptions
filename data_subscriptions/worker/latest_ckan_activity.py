@@ -28,6 +28,7 @@ class LatestCKANActivity:
             self.current_offset += self.server_limit
             if self.has_reached_the_end(response):
                 break
+            RemoteCKAN.close(api)
         return self.activity_list
 
     def filter_response_for_time_range(self, response):
