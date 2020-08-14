@@ -16,7 +16,7 @@ class LatestCKANActivity:
         self.current_offset = 0
 
     def __call__(self):
-        api = RemoteCKAN(self.url)
+        api = RemoteCKAN(self.url, user_agent='ckanapiexample/1.0 (+http://example.com/my/website)')
         self.activity_list = []
         while True:
             response = api.action.recently_changed_packages_activity_list(
@@ -28,6 +28,7 @@ class LatestCKANActivity:
             self.current_offset += self.server_limit
             if self.has_reached_the_end(response):
                 break
+            RemoteCKAN.close(api)
         return self.activity_list
 
     def filter_response_for_time_range(self, response):
