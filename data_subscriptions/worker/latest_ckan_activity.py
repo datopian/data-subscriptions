@@ -16,7 +16,7 @@ class LatestCKANActivity:
         self.current_offset = 0
 
     def __call__(self):
-        api = RemoteCKAN(self.url, user_agent='ckanapiexample/1.0 (+http://example.com/my/website)')
+        api = RemoteCKAN(self.url)
         self.activity_list = []
         while True:
             response = api.action.recently_changed_packages_activity_list(
