@@ -30,7 +30,8 @@ class EmailTemplateData:
                 data["new_package"].append(new_dataset_item)
             else:
                 dataset_item = DatasetActivity(metadata, activities)()
-                data["packages"].append(dataset_item)
+                if dataset_item is not None:
+                    data["packages"].append(dataset_item)
         return data
 
     def activities_by_dataset(self):
@@ -59,9 +60,13 @@ class DatasetActivity:
         }
 
         for activity in self.activities:
-            if self.get_activity_type(activity) not in items["activities"]:
+            activity_msg = self.get_activity_type(activity)
+            if activity_msg and (activity_msg not in items["activities"]):
                 items["activities"].append(self.get_activity_type(activity))
-        return items
+        if items["activities"]:
+            return items
+        else:
+            return None
 
     def get_activity_type(self, activity):
         messages_for_activity_type = {
@@ -88,4 +93,7 @@ class DatasetActivity:
             activity["activity_type"] = new_activity_type
 
         if "activity_type" in activity:
-            return messages_for_activity_type[activity.get("activity_type")]
+            if activity.get("activity_type") in messages_for_activity_type.keys():
+                return messages_for_activity_type[activity.get("activity_type")]
+            else:
+                return False
