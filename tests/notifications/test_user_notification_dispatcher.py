@@ -175,6 +175,36 @@ def test_send_when_both_new_dataset_and_update_msg_on_activity_list(
     assert dispatcher.call_count == 2
 
 
+def test_dont_dispatch_nofication_when_there_are_others_activity(
+    mocker, subject, db, subscription_data
+):
+    db.session.add(subscription_data)
+    db.session.commit()
+
+    activities = [
+        {
+            "dataset_id": "43",
+            "activity": {
+                "object_id": "43",
+                "id": "",
+                "data": {"body": {}},
+                "activity_type": "new packageextra",
+            },
+        }
+    ]
+
+    subject = UserNotificationDispatcher(
+        "user-id-1", activities, dt.datetime(2020, 1, 1)
+    )
+    subject.prepare()
+    dispatcher = mocker.patch(
+        "data_subscriptions.notifications.user_notification_dispatcher.EmailDispatcher"
+    )
+    subject.send()
+    assert len(subject.datasetUpdateMsgFilter(subject._template_data)) == 0
+    dispatcher.return_value.assert_not_called()
+
+
 def test_prepare(mocker, subject, db, subscription_data):
     db.session.add(subscription_data)
     db.session.commit()
