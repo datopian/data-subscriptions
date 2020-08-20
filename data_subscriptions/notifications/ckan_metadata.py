@@ -26,5 +26,6 @@ class CKANMetadata:
             except errors.NotFound:
                 url = f"action={self.action} id={item_id}"
                 logging.error(f"CKAN API NotFound error: {url}")
+            RemoteCKAN.close(self.api)
 
         return metadata
