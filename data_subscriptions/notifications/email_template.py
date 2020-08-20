@@ -86,6 +86,7 @@ class DatasetActivity:
             return messages_for_activity_type[activity_type]
 
         details = self.ckan_api.action.activity_detail_list(id=activity["id"])
+        RemoteCKAN.close(self.ckan_api)
 
         if len(details) >= 1:
             detail = details[0]
