@@ -17,20 +17,23 @@ TIMESTAMP_AFTER = "2020-02-01T00:00:00.000001"
 
 
 def seed_db_with_fixtures(db):
-    db.session.add(
-        DatasetActivityList(blob=activity_list_blob(), collected_at=dt.datetime.now())
-    )
+    db.session.add(DatasetActivityList(blob=activity_list_blob([TIMESTAMP_BEFORE],
+                   ['a', 'b']), collected_at=TIMESTAMP_BEFORE))
+
+    db.session.add(DatasetActivityList(blob=activity_list_blob([TIMESTAMP_AFTER],
+                   ['c', 'd']), collected_at=TIMESTAMP_AFTER))
+
     for record in subscriptions():
         db.session.add(record)
         db.session.commit()
 
 
-def activity_list_blob():
+def activity_list_blob(timestamp, object_id):
     blob = record_list_for_combinations(
         {
             "activity_type": ["new package", "changed package"],
-            "timestamp": [TIMESTAMP_BEFORE, TIMESTAMP_AFTER],
-            "object_id": ["a", "b"],
+            "timestamp": timestamp,
+            "object_id": object_id,
         }
     )
     return blob
@@ -39,7 +42,7 @@ def activity_list_blob():
 def subscriptions():
     xs = []
     for kind in ["DATASET", "NEW_DATASETS"]:
-        dataset_ids = ["a"] if kind == "DATASET" else [None]
+        dataset_ids = ["c"] if kind == "DATASET" else [None]
         for user_id in ["1", "2"]:
             for dataset_id in dataset_ids:
                 xs.append(
@@ -54,11 +57,11 @@ def subscriptions():
                 )
     xs.append(
         Subscription(
-            dataset_id="b",
+            dataset_id="d",
             user_id="3",
             email="julietezekwe@gmail.com",
             user_name=f"User 3",
-            dataset_name="b",
+            dataset_name="d",
             kind="DATASET",
         )
     )
@@ -83,53 +86,57 @@ def test_filter_new_packages(db):
         {
             "kind": "NEW_DATASETS",
             "user_id": "1",
-            "dataset_id": "a",
+            "dataset_id": "c",
             "dataset_name": None,
             "user_name": "User 1",
+            "collected_at": "2020-02-01T00:00:00+00",
             "activity_type": "new package",
             "activity": {
                 "activity_type": "new package",
                 "timestamp": "2020-02-01T00:00:00.000001",
-                "object_id": "a",
+                "object_id": "c",
             },
         },
         {
             "kind": "NEW_DATASETS",
             "user_id": "2",
-            "dataset_id": "a",
+            "dataset_id": "c",
             "dataset_name": None,
             "user_name": "User 2",
+            "collected_at": "2020-02-01T00:00:00+00",
             "activity_type": "new package",
             "activity": {
                 "activity_type": "new package",
                 "timestamp": "2020-02-01T00:00:00.000001",
-                "object_id": "a",
+                "object_id": "c",
             },
         },
         {
             "kind": "NEW_DATASETS",
             "user_id": "1",
-            "dataset_id": "b",
+            "dataset_id": "d",
             "dataset_name": None,
             "user_name": "User 1",
+            "collected_at": "2020-02-01T00:00:00+00",
             "activity_type": "new package",
             "activity": {
                 "activity_type": "new package",
                 "timestamp": "2020-02-01T00:00:00.000001",
-                "object_id": "b",
+                "object_id": "d",
             },
         },
         {
             "kind": "NEW_DATASETS",
             "user_id": "2",
-            "dataset_id": "b",
+            "dataset_id": "d",
             "dataset_name": None,
             "user_name": "User 2",
+            "collected_at": "2020-02-01T00:00:00+00",
             "activity_type": "new package",
             "activity": {
                 "activity_type": "new package",
                 "timestamp": "2020-02-01T00:00:00.000001",
-                "object_id": "b",
+                "object_id": "d",
             },
         },
     ]
@@ -145,40 +152,43 @@ def test_filter_dataset_updates(db):
         {
             "kind": "DATASET",
             "user_id": "2",
-            "dataset_id": "a",
-            "dataset_name": "a",
+            "dataset_id": "c",
+            "dataset_name": "c",
             "user_name": "User 2",
+            "collected_at": "2020-02-01T00:00:00+00",
             "activity_type": "changed package",
             "activity": {
                 "activity_type": "changed package",
                 "timestamp": "2020-02-01T00:00:00.000001",
-                "object_id": "a",
+                "object_id": "c",
             },
         },
         {
             "kind": "DATASET",
             "user_id": "1",
-            "dataset_id": "a",
-            "dataset_name": "a",
+            "dataset_id": "c",
+            "dataset_name": "c",
             "user_name": "User 1",
+            "collected_at": "2020-02-01T00:00:00+00",
             "activity_type": "changed package",
             "activity": {
                 "activity_type": "changed package",
                 "timestamp": "2020-02-01T00:00:00.000001",
-                "object_id": "a",
+                "object_id": "c",
             },
         },
         {
             "kind": "DATASET",
             "user_id": "3",
-            "dataset_id": "b",
-            "dataset_name": "b",
+            "dataset_id": "d",
+            "dataset_name": "d",
             "user_name": "User 3",
+            "collected_at": "2020-02-01T00:00:00+00",
             "activity_type": "changed package",
             "activity": {
                 "activity_type": "changed package",
                 "timestamp": "2020-02-01T00:00:00.000001",
-                "object_id": "b",
+                "object_id": "d",
             },
         },
     ]
