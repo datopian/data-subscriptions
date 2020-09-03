@@ -69,6 +69,32 @@ class DatasetActivity:
             return None
 
     def get_activity_type(self, activity):
+        # Check custom activity type eg. 'changed file'
+        custom_activity_type = (
+            activity["data"].get("body", {}).get("activity_type", False)
+        )
+        if custom_activity_type:
+            return self.get_message_for_activity([custom_activity_type])
+
+        activity_type_from_detail = self.get_activity_detail(activity["id"])
+
+        if (activity["activity_type"] != "new package") and activity_type_from_detail:
+            return self.get_message_for_activity(activity_type_from_detail)
+        else:
+            return self.get_message_for_activity(activity["activity_type"])
+
+    def get_activity_detail(self, activity_id):
+        details = self.ckan_api.action.activity_detail_list(id=activity_id)
+        RemoteCKAN.close(self.ckan_api)
+        if len(details) >= 1:
+            detail = details[0]
+            object_type = detail["object_type"]
+            activity_type = "%s %s" % (detail["activity_type"], object_type.lower())
+            return activity_type
+        else:
+            return False
+
+    def get_message_for_activity(self, activity_type):
         messages_for_activity_type = {
             "new package": "A new dataset has been created.",
             "new resource": "A new file has been added.",
@@ -80,22 +106,7 @@ class DatasetActivity:
             "removed tag": "The tags have been changed.",
         }
 
-        activity_type = activity["data"].get("body", {}).get("activity_type", False)
-
-        if activity_type:
+        if activity_type in messages_for_activity_type.keys():
             return messages_for_activity_type[activity_type]
-
-        details = self.ckan_api.action.activity_detail_list(id=activity["id"])
-        RemoteCKAN.close(self.ckan_api)
-
-        if len(details) >= 1:
-            detail = details[0]
-            object_type = detail["object_type"]
-            new_activity_type = "%s %s" % (detail["activity_type"], object_type.lower())
-            activity["activity_type"] = new_activity_type
-
-        if "activity_type" in activity:
-            if activity.get("activity_type") in messages_for_activity_type.keys():
-                return messages_for_activity_type[activity.get("activity_type")]
-            else:
-                return False
+        else:
+            return False
