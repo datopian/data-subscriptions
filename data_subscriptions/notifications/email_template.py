@@ -74,7 +74,7 @@ class DatasetActivity:
             activity["data"].get("body", {}).get("activity_type", False)
         )
         if custom_activity_type:
-            return self.get_message_for_activity([custom_activity_type])
+            return self.get_message_for_activity(custom_activity_type)
 
         activity_type_from_detail = self.get_activity_detail(activity["id"])
 

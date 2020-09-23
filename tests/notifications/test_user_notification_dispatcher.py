@@ -74,6 +74,35 @@ def test_call_without_user(mocker, subject, db, subscription_data):
     subject.send.assert_not_called()
 
 
+def test_prepare_tempate_custom_activity(mocker, subject, db, subscription_data):
+    db.session.add(subscription_data)
+    db.session.commit()
+
+    activities = [{
+        "dataset_id": "42",
+        "activity": {
+            "object_id": "42",
+            "data": {
+                "action": "datastore_delete",
+                "body": {
+                    "resource_id": "xxx-xxx-xxx",
+                    "activity_type": "deleted resource"
+                }
+            },
+            "activity_type": "none"
+        }
+    }]
+    subject = UserNotificationDispatcher(
+        "user-id-1", activities, dt.datetime(2020, 1, 1)
+    )
+    subject.prepare()
+    dispatcher = mocker.patch(
+        "data_subscriptions.notifications.user_notification_dispatcher.EmailDispatcher"
+    )
+    subject.send()
+    assert len(subject.datasetUpdateMsgFilter(subject._template_data)) == 1
+    dispatcher.return_value.assert_called_once()
+
 def test_prepare_tempate_new_dataset_notification(
     mocker, subject, db, subscription_data
 ):
