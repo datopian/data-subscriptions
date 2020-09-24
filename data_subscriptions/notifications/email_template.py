@@ -58,11 +58,10 @@ class DatasetActivity:
             "url": "%s/%s" % (pkg_url, self.dataset["name"]),
             "activities": [],
         }
-
         for activity in self.activities:
             activity_msg = self.get_activity_type(activity)
             if activity_msg and (activity_msg not in items["activities"]):
-                items["activities"].append(self.get_activity_type(activity))
+                items["activities"].append(activity_msg)
         if items["activities"]:
             return items
         else:
@@ -86,8 +85,18 @@ class DatasetActivity:
     def get_activity_detail(self, activity_id):
         details = self.ckan_api.action.activity_detail_list(id=activity_id)
         RemoteCKAN.close(self.ckan_api)
-        if len(details) >= 1:
-            detail = details[0]
+        
+        if details:
+            try:
+                # Filter recent activity sorted by 'last_modified'
+                detail = sorted(
+                    details, key=lambda i: i["data"].get("resource", i["data"].get("package"))[
+                        "last_modified"
+                    ] or "", reverse=True,
+                )[0]
+            except:
+                detail = details[0]
+
             object_type = detail["object_type"]
             activity_type = "%s %s" % (detail["activity_type"], object_type.lower())
             return activity_type
