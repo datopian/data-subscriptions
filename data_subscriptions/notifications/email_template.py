@@ -52,7 +52,8 @@ class DatasetActivity:
         self.ckan_api = RemoteCKAN(
             CKAN_URL,
             apikey=CKAN_API_KEY,
-            user_agent="data-subscription/latest (API call for CKAN activity pull)")
+            user_agent="data-subscription/latest (API call for CKAN activity details)",
+        )
 
     def __call__(self):
         pkg_url = urljoin(FRONTEND_SITE_URL, self.dataset["organization"]["name"])

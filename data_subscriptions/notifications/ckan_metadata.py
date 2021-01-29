@@ -15,9 +15,11 @@ class CKANMetadata:
     def __init__(self, action, entity_ids):
         self.action = action
         self.entity_ids = entity_ids
-        self.api = RemoteCKAN(CKAN_URL,
-                              apikey=CKAN_API_KEY,
-                              user_agent="data-subscription/latest (API call for CKAN activity pull)")
+        self.api = RemoteCKAN(
+            CKAN_URL,
+            apikey=CKAN_API_KEY,
+            user_agent="data-subscription/latest (API call for CKAN package metadata details)"
+        )
 
     def __call__(self):
         endpoint = getattr(self.api.action, self.action)

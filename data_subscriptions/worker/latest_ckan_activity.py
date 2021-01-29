@@ -18,8 +18,8 @@ class LatestCKANActivity:
     def __call__(self):
         api = RemoteCKAN(
             self.url,
-            user_agent=
-            "data-subscription/latest (API call for CKAN activity pull)")
+            user_agent="data-subscription/latest (API call for CKAN recent activity pull)",
+        )
         self.activity_list = []
         while True:
             response = api.action.recently_changed_packages_activity_list(
