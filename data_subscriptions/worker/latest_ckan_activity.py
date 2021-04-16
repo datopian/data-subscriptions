@@ -16,23 +16,24 @@ class LatestCKANActivity:
         self.current_offset = 0
 
     def __call__(self):
-        api = RemoteCKAN(
+        with RemoteCKAN(
             self.url,
-            user_agent="data-subscription/latest (API call for CKAN recent activity pull)",
-        )
-        self.activity_list = []
-        while True:
-            response = api.action.recently_changed_packages_activity_list(
-                limit=self.server_limit, offset=self.current_offset
-            )
-            self.activity_list += self.filter_response_for_time_range(response)
-            if self.current_offset == 0:
-                self.server_limit = len(response)
-            self.current_offset += self.server_limit
-            if self.has_reached_the_end(response):
-                break
-            RemoteCKAN.close(api)
-        return self.activity_list
+            user_agent=
+            "data-subscription/latest (API call for CKAN recent activity pull)",
+        ) as api:
+
+          self.activity_list = []
+          while True:
+              response = api.action.recently_changed_packages_activity_list(
+                  limit=self.server_limit, offset=self.current_offset
+              )
+              self.activity_list += self.filter_response_for_time_range(response)
+              if self.current_offset == 0:
+                  self.server_limit = len(response)
+              self.current_offset += self.server_limit
+              if self.has_reached_the_end(response):
+                  break
+          return self.activity_list
 
     def filter_response_for_time_range(self, response):
         def is_in_time_range(item):
