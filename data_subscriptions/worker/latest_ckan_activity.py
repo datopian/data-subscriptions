@@ -50,6 +50,10 @@ class LatestCKANActivity:
         if items_returned == 0:
             return True
 
+        items_after_filter = self.filter_response_for_time_range(last_response)
+        if len(list(items_after_filter)) < items_returned:
+            return True
+
         return (self.current_offset > 0) and (
             (items_returned < self.server_limit) or (len(self.activity_list) == 0)
         )
