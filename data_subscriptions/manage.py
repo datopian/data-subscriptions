@@ -4,7 +4,7 @@ from flask.cli import FlaskGroup
 from data_subscriptions.app import create_app
 
 
-def create_data_subscriptions(info):
+def create_data_subscriptions():
     return create_app(cli=True)
 
 
