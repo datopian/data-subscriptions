@@ -113,7 +113,9 @@ class Subscription(Resource):
         email = data["email"]
         user_id = data["user_id"]
         user_name = data["username"]
+        phone_number = data["phone_number"] if "phone_number" in data else None
         kind = data["kind"]
+        print(data, flush=True)
 
         if kind == self.DATASET and can_subscribe(user_id, data["dataset_id"]):
             dataset_id = data["dataset_id"]
@@ -126,6 +128,7 @@ class Subscription(Resource):
                     dataset_id=dataset_id,
                     dataset_name=dataset_name,
                     user_name=user_name,
+                    phone_number=phone_number,
                 )
             )
             db.session.commit()
