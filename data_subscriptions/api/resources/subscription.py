@@ -10,17 +10,20 @@ from data_subscriptions.notifications.ckan_metadata import CKANMetadata
 def can_subscribe(user_id, dataset_id=False):
     if dataset_id:
         is_not_in_db = not db.session.query(
-            Model.query.filter_by(dataset_id=dataset_id, user_id=user_id).exists()
+            Model.query.filter_by(dataset_id=dataset_id,
+                                  user_id=user_id).exists()
         ).scalar()
         if is_not_in_db:
             is_subscribable = not db.session.query(
-                NonsubscribableDataset.query.filter_by(dataset_id=dataset_id).exists()
+                NonsubscribableDataset.query.filter_by(
+                    dataset_id=dataset_id).exists()
             ).scalar()
             return is_subscribable
         return is_not_in_db
     else:
         return not db.session.query(
-            Model.query.filter_by(kind="NEW_DATASETS", user_id=user_id).exists()
+            Model.query.filter_by(kind="NEW_DATASETS",
+                                  user_id=user_id).exists()
         ).scalar()
 
 
@@ -115,11 +118,11 @@ class Subscription(Resource):
         user_name = data["username"]
         phone_number = data["phone_number"] if "phone_number" in data else None
         kind = data["kind"]
-        print(data, flush=True)
 
         if kind == self.DATASET and can_subscribe(user_id, data["dataset_id"]):
             dataset_id = data["dataset_id"]
-            dataset_name = get_ckan_metadata(dataset_id, "package_show", "name")
+            dataset_name = get_ckan_metadata(
+                dataset_id, "package_show", "name")
             db.session.add(
                 Model(
                     user_id=user_id,
@@ -155,7 +158,8 @@ class Subscription(Resource):
             db.session.commit()
             status = 201
             response = (
-                {"subscribed": True, "user_id": user_id, "kind": self.NEW_DATASETS,},
+                {"subscribed": True, "user_id": user_id,
+                    "kind": self.NEW_DATASETS, },
                 status,
             )
         else:
