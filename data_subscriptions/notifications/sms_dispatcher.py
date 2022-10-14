@@ -3,8 +3,8 @@ import os
 import json
 import requests
 
-TWILLIO_PASSWORD = os.getenv("TWILLIO_PASSWORD")
-TWILLIO_URL = os.getenv("TWILLIO_URL")
+TWILIO_PASSWORD = os.getenv("TWILIO_PASSWORD")
+TWILIO_URL = os.getenv("TWILIO_URL")
 
 
 class SmsDispatcher:
@@ -14,7 +14,7 @@ class SmsDispatcher:
 
     def __init__(self, phone):
         self.phone = phone
-        self.url = TWILLIO_URL + '/send-messages'
+        self.url = TWILIO_URL + '/send-messages'
 
     def __call__(self, template_data):
         nl_char = '\n'
@@ -22,7 +22,7 @@ class SmsDispatcher:
         try:
             body = {
                 'message': f"The package \"{package_data['title']}\" had the recent changes:\n {nl_char.join(list(map(lambda i: f'- {i}', package_data['activities'])))}",
-                'passcode': TWILLIO_PASSWORD,
+                'passcode': TWILIO_PASSWORD,
                 'recipients': self.phone,
             }
             self.response = requests.post(self.url, json=body)
