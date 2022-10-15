@@ -81,14 +81,14 @@ class UserNotificationDispatcher:
     def datasetUpdateMsgFilter(self, activitesList):
         return activitesList.get("packages", [])
 
-    @ property
+    @property
     def datasets(self):
         if not self._datasets:
             ids = set(map(itemgetter("dataset_id"), self.activities))
             self._datasets = CKANMetadata("package_show", ids)()
         return self._datasets
 
-    @ property
+    @property
     def user(self):
         if not self._user:
             user_detail = Model.query.filter_by(user_id=self.user_id).first()
