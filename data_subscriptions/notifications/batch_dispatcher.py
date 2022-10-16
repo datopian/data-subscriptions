@@ -23,7 +23,8 @@ class BatchDispatcher:
         activities_by_user = ActivityList(start_time).by_user()
         for user_id, xs in activities_by_user:
             activities = [x for x in xs]
-            dispatcher = UserNotificationDispatcher(user_id, activities, start_time)
+            dispatcher = UserNotificationDispatcher(
+                user_id, activities, start_time)
             dispatcher()
 
     def last_notification_time(self):

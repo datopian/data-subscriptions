@@ -39,5 +39,6 @@ class ActivityList:
     @property
     def all(self):
         if not self._all:
-            self._all = db.session.execute(QUERY, {"start_time": self.start_time})
+            self._all = db.session.execute(
+                QUERY, {"start_time": self.start_time})
         return self._all
