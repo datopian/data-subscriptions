@@ -27,6 +27,10 @@ def can_subscribe(user_id, dataset_id=False):
         ).scalar()
 
 
+def get_subscription_by_dataset_id(dataset_id):
+    return db.session.query(Model).filter(Model.dataset_id == dataset_id).first()
+
+
 def get_ckan_metadata(data_id, action, attr):
     result = CKANMetadata(action, [data_id])()
     if data_id in result and attr in result[data_id]:
@@ -85,6 +89,7 @@ class SubscriptionStatus(Resource):
             ).first_or_404()
             response = {
                 "dataset_id": subscription.dataset_id,
+                "phone_number": subscription.phone_number,
                 "user_id": subscription.user_id,
                 "kind": self.DATASET,
             }
@@ -105,6 +110,26 @@ class Subscription(Resource):
         self.NEW_DATASETS = "NEW_DATASETS"
         self.DELETE = "DELETE"
         self.POST = "POST"
+        self.PUT = "PUT"
+
+    def put(self):
+        response = {}
+        data = request.get_json(force=True)
+        keys = ["email", "user_id", "username", "kind"]
+        if is_missing_post_params(data, keys):
+            return {"error": "invalid parameters"}, HTTPStatus.UNPROCESSABLE_ENTITY
+        dataset_id = data['dataset_id']
+        subscription = get_subscription_by_dataset_id(dataset_id)
+        if subscription is None:
+            return {"error": "could not find subscription"}, HTTPStatus.NOT_FOUND
+        phone_number = data["phone_number"] if "phone_number" in data else None
+        if phone_number:
+            setattr(subscription, "phone_number", phone_number)
+        else:
+            setattr(subscription, "phone_number", None)
+        db.session.add(subscription)
+        db.session.commit()
+        db.session.refresh(subscription)
 
     def post(self):
         response = {}
