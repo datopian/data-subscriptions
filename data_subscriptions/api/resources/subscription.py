@@ -27,8 +27,8 @@ def can_subscribe(user_id, dataset_id=False):
         ).scalar()
 
 
-def get_subscription_by_dataset_id(dataset_id):
-    return db.session.query(Model).filter(Model.dataset_id == dataset_id).first()
+def get_subscription_by_dataset_id(dataset_id, user_id):
+    return Model.query.filter_by(dataset_id=dataset_id, user_id=user_id).first()
 
 
 def get_ckan_metadata(data_id, action, attr):
@@ -118,8 +118,9 @@ class Subscription(Resource):
         keys = ["email", "user_id", "username", "kind"]
         if is_missing_post_params(data, keys):
             return {"error": "invalid parameters"}, HTTPStatus.UNPROCESSABLE_ENTITY
-        dataset_id = data['dataset_id']
-        subscription = get_subscription_by_dataset_id(dataset_id)
+        dataset_id = data["dataset_id"]
+        user_id = data["user_id"]
+        subscription = get_subscription_by_dataset_id(dataset_id, user_id)
         if subscription is None:
             return {"error": "could not find subscription"}, HTTPStatus.NOT_FOUND
         phone_number = data["phone_number"] if "phone_number" in data else None
