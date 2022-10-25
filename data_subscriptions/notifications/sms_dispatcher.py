@@ -5,6 +5,7 @@ import requests
 
 TWILIO_PASSWORD = os.getenv("TWILIO_PASSWORD")
 TWILIO_URL = os.getenv("TWILIO_URL")
+FRONTEND_SITE_URL = os.getenv("FRONTEND_SITE_URL")
 
 
 class SmsDispatcher:
@@ -17,11 +18,10 @@ class SmsDispatcher:
         self.url = TWILIO_URL + '/send-messages'
 
     def __call__(self, template_data):
-        nl_char = '\n'
         package_data = template_data['package']
         try:
             body = {
-                'message': f"The package \"{package_data['title']}\" had the recent changes:\n {nl_char.join(list(map(lambda i: f'- {i}', package_data['activities'])))}",
+                'message': f"Dataset updated at: {FRONTEND_SITE_URL}/{package_data['organization']['name']}/{package_data['name']}",
                 'passcode': TWILIO_PASSWORD,
                 'recipients': self.phone,
             }
