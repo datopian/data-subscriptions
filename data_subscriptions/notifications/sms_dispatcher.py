@@ -19,8 +19,6 @@ class SmsDispatcher:
 
     def __call__(self, template_data):
         package_data = template_data['package']
-        logging.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-        logging.info(TWILIO_PASSWORD)
         try:
             body = {
                 'message': f"Dataset updated at: {FRONTEND_SITE_URL}/{package_data['organization']['name']}/{package_data['name']}",
