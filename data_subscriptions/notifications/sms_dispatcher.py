@@ -21,7 +21,7 @@ class SmsDispatcher:
         package_data = template_data['package']
         try:
             body = {
-                'message': f"Dataset updated at: {FRONTEND_SITE_URL}/{package_data['url']}",
+                'message': f"The Dataset {package_data['title']} has been updated, visit the following URL for details: {package_data['url']}",
                 'passcode': TWILIO_PASSWORD,
                 'recipients': self.phone,
             }
