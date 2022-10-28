@@ -56,9 +56,11 @@ class DatasetActivity:
         )
 
     def __call__(self):
-        pkg_url = urljoin(FRONTEND_SITE_URL, self.dataset["organization"]["name"])
+        pkg_url = urljoin(FRONTEND_SITE_URL,
+                          self.dataset["organization"]["name"])
         items = {
             "title": self.dataset["title"],
+            "name": self.dataset["name"],
             "url": "%s/%s" % (pkg_url, self.dataset["name"]),
             "activities": [],
         }
@@ -89,7 +91,7 @@ class DatasetActivity:
     def get_activity_detail(self, activity_id):
         details = self.ckan_api.action.activity_detail_list(id=activity_id)
         RemoteCKAN.close(self.ckan_api)
-        
+
         if details:
             try:
                 # Filter recent activity sorted by 'last_modified'
@@ -102,7 +104,8 @@ class DatasetActivity:
                 detail = details[0]
 
             object_type = detail["object_type"]
-            activity_type = "%s %s" % (detail["activity_type"], object_type.lower())
+            activity_type = "%s %s" % (
+                detail["activity_type"], object_type.lower())
             return activity_type
         else:
             return False
