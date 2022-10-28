@@ -65,11 +65,18 @@ class UserNotificationDispatcher:
                     {"user": user, "package": newDatasetActivites}, "new")
 
             if len(datasetUpdateActivities) > 0:
-                if self.user["phone_number"]:
-                    sms_dispatcher = SmsDispatcher(self.user["phone_number"])
-                    for package in datasetUpdateActivities:
-                        sms_dispatcher(
-                            {"user": user, "package": package})
+                subscriptions = Model.query.filter_by(
+                    user_id=self.user_id).all()
+                for subscription in subscriptions:
+                    if subscription.phone_number is not None:
+                        sms_dispatcher = SmsDispatcher(
+                            subscription.phone_number)
+                        for package in datasetUpdateActivities:
+                            if package['name'] == subscription.dataset_name:
+                                logging.info(
+                                    'sending info to ' + package['name'])
+                                sms_dispatcher(
+                                    {"user": user, "package": package})
                 email_dispatcher = EmailDispatcher(self.user["email"])
                 email_dispatcher(
                     {"user": user, "package": datasetUpdateActivities}, "update",
@@ -96,6 +103,5 @@ class UserNotificationDispatcher:
                 "user_id": self.user_id,
                 "user_name": user_detail.user_name,
                 "email": user_detail.email,
-                "phone_number": user_detail.phone_number,
             }
         return self._user
